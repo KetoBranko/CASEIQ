@@ -1,0 +1,81 @@
+export const QA_TREE = {
+  start: { q: "Was produziert der Kunde hauptsächlich?", h: "Der richtige Einstieg bestimmt alle weiteren Fragen", os: [
+    { l: "Lacke & Beschichtungen", nx: "ct_type" },
+    { l: "Klebstoffe", nx: "ad_type" },
+    { l: "Dichtmassen / Elastomere", nx: "se_type" },
+    { l: "Gummi / Technische Elastomere", nx: "rubber" },
+    { l: "Kunststoffe / Composites", nx: "plastics" },
+    { l: "Bauchemie (Beton, Mörtel, Asphalt)", nx: "construction" },
+    { l: "Drucktinten / Printing Inks", nx: "printing" },
+    { l: "Textil & Leder", nx: { r: [23,27,24,29,30], note: "Silwet/Surfaline (Tenside), Softanol EP, Entschäumer RICCI. Vollständiges RICCI Textile & Leather Programm verfügbar." } },
+  ]},
+  ct_type: { q: "Welche Art von Lacksystem?", h: "Wichtigste Weiche: Lösemittel vs. wasserbasiert vs. reaktiv", os: [
+    { l: "Lösemittelbasiert – Alkydsysteme", nx: "sb_alkyd" },
+    { l: "Lösemittelbasiert – Acrylat/Hochfest", nx: "sb_acrylic" },
+    { l: "Wasserbasiert – Dispersionen", nx: "wb_type" },
+    { l: "2K-PU (Polyurethan)", nx: "2k_pu" },
+    { l: "2K-Epoxy", nx: "2k_epoxy" },
+    { l: "UV-härtend / Strahlung", nx: { r: [38,31,37,13], note: "Neboflow 80X (silikonfrei – Intercoat!), Silislide (Kratz/Slip), Rheologie. Photoinitiator/UV-Oligomere nicht im Portfolio." } },
+    { l: "Powder Coating / Einbrennlack", nx: { r: [4,33,34,32], note: "Thermoplast. Acrylharze, EUROLITE, Fascat, Antioxidantien. Kernharze Powder Coating begrenzt." } },
+  ]},
+  sb_alkyd: { q: "Substrat / Anwendung?", h: "Lösemittelbasiert Alkyd", os: [
+    { l: "Holz (Möbel/Deko/Parkett)", nx: { r: [1,44,13,33,32], note: "Nebores Alkyd, Safic-Chem ZM Drier (kobaltfrei!), Nebochips NCE-C, EUROLITE, EURONOX." } },
+    { l: "Metall / Industrielack", nx: { r: [1,4,44,33,37,38], note: "Nebores Alkyd oder Thermoplast. Acryl, Safic-Chem HS/ZM Drier, EUROLITE, Soltense (Anti-Settling), Neboflow 80X." } },
+    { l: "Straßenmarkierung / Road Marking", nx: { r: [8,9,10,14], note: "HAITACK JH (vollhydriert, hell), HyStar HV (C9 teilhydriert), DayStar (Standard/Hot Melt RM), Nebotint WH." } },
+    { l: "Drucktinte lösemittelbasiert", nx: { r: [13,14,16,7], note: "Nebochips NCA-C (Flexo) oder NCE-C (Tiefdruck), Nebotint M (aromatenarm), Colourplex CICP, Phenolharze SI Group." } },
+  ]},
+  sb_acrylic: { q: "Anwendungsbereich?", h: "Lösemittelbasiert Acrylat", os: [
+    { l: "Industrielack / Korrosionsschutz", nx: { r: [4,5,33,34,37,38,32], note: "Thermoplast. Acrylharz (1K) oder OH-Acrylat (2K-PU), EUROLITE, Fascat, Soltense, Neboflow 80X, Antioxidantien." } },
+    { l: "Automobil-Refinish / OEM", nx: { r: [5,36,34,33,38,47], note: "OH-Acrylharz, Dianol/Adiansol (Polyol), Fascat, EUROLITE, Neboflow 80X, Safic-Chem TI." } },
+    { l: "Schutzlack / Hochtemperatur", nx: { r: [12,4,33,32], note: "Polyimid P84 (bis 250°C+), Thermoplast. Acrylharz, EUROLITE, Antioxidantien." } },
+  ]},
+  wb_type: { q: "Welcher Bereich wasserbasierte Beschichtung?", h: "", os: [
+    { l: "Fassadenfarbe / Dekorfarbe", nx: { r: [2,24,35,33,39,23], note: "Neboplast Styrolacrylat/Acrylat, Surfaline CA oder Sensio (Ecolabel!), Ensoline (MFT), EUROLITE, ADINS Clean (optional selbstreinigend)." } },
+    { l: "Industrielack / Korrosionsschutz WB", nx: { r: [2,5,27,40,30,33], note: "Neboplast PU-Dispersion oder Acrylat, OH-Acrylat (2K-WB-PU), Softanol EP, AC3000, Defoam RICCI, EUROLITE." } },
+    { l: "Holzlack / Parkettlack WB", nx: { r: [2,30,35,40,31,33], note: "Neboplast PU-Dispersion, Entschäumer Defoam, Ensoline, AC3000, Silislide (Kratz/Slip), EUROLITE." } },
+    { l: "Dachbeschichtung / Cool Roof", nx: { r: [2,14,24,35,33,39], note: "Acrylat-Dispersion, Nebotint WH (IR-reflektierend – Kern!), Surfaline, Ensoline, EUROLITE, ADINS Clean." } },
+  ]},
+  "2k_pu": { q: "Substrat / Markt 2K-PU?", h: "", os: [
+    { l: "Metall / Korrosionsschutz", nx: { r: [5,36,34,41,33,38,47], note: "OH-Acrylharz, Dianol/Adiansol, Fascat, SIL Silane (Primer Metall!), EUROLITE, Neboflow 80X, Safic-Chem TI." } },
+    { l: "Holz / Möbel / Parkett", nx: { r: [5,36,34,33,38,31], note: "OH-Acrylharz, Polyol, Fascat, EUROLITE, Neboflow 80X (silikonfrei!), Silislide." } },
+    { l: "Kunststoff / Automobil", nx: { r: [5,36,34,41,33,38,11], note: "OH-Acrylharz, Polyol, Fascat, SIL Silane (Kunststoff-Haftung), EUROLITE, Neboflow 80X, Poly BD." } },
+  ]},
+  "2k_epoxy": { q: "Anwendung 2K-Epoxy?", h: "", os: [
+    { l: "Bodenbeschichtung / Betonschutz", nx: { r: [41,20,43,37,30], note: "SIL Silane (Beton-Haftung – essentiell!), Peroxide, HGM (Textur/Gewicht), Rheologie, Entschäumer." } },
+    { l: "Korrosionsschutz Stahl", nx: { r: [41,20,11,37,30,32], note: "SIL Silane (Metall-Haftung), Peroxide, Poly BD (Flexibilisierung), Rheologie, Entschäumer, Antioxidantien." } },
+  ]},
+  ad_type: { q: "Welche Art von Klebstoff?", h: "", os: [
+    { l: "Heißschmelzkleber (Hot Melt)", nx: { r: [6,8,9,10,22], note: "Tackifier: Cleartack W (günstig), HAITACK JH (hell/vergilbungsfrei), HyStar HV (C9 teilhydr.), DayStar (Standard). Lowinox für Langzeitstabilität." } },
+    { l: "Dispersionsklebstoff (PVAc/Acrylat)", nx: { r: [2,27,30,37,40], note: "Neboplast PVAc/Acrylat, Softanol EP, Entschäumer RICCI, Rheologie, AC3000." } },
+    { l: "PU-Klebstoff 2K", nx: { r: [19,36,41,11,37], note: "Thanecure T9, Dianol/Adiansol, SIL Silane (Metall/Glas!), Poly BD, Rheologie." } },
+    { l: "PSA / Druckempfindlicher Klebstoff", nx: { r: [6,10,22,33,40], note: "Cleartack W, DayStar (Tackifier), Lowinox, EUROLITE (UV außen), AC3000." } },
+    { l: "Kontaktklebstoff (Lösemittel)", nx: { r: [3,13,22,41], note: "Nebores Specialty Resins, Nebochips CAB/VIN, Antioxidantien, SIL Silane." } },
+  ]},
+  se_type: { q: "Dichtmassenbasis?", h: "", os: [
+    { l: "MS-Polymer / Silyliertes PU", nx: { r: [41,47,43,37], note: "SIL Silane (Haftvermittler + Feuchtigkeitsfänger – doppelt kritisch!), Safic-Chem TI, HGM, Rheologie." } },
+    { l: "PU-Dichtmasse 1K/2K", nx: { r: [19,41,47,43,11,37], note: "Thanecure T9, SIL Silane, Safic-Chem TI, HGM, Poly BD, Rheologie." } },
+    { l: "Acrylat-Dichtmasse", nx: { r: [2,41,37,30], note: "Neboplast Acrylat, SIL Silane optional, Rheologie, Entschäumer." } },
+    { l: "Silikon-Dichtmasse", nx: { r: [41,29,37], note: "SIL Silane (Primer – essentiell!), SAG/Indusil Prozess. Silikonbasis nicht im Portfolio." } },
+  ]},
+  rubber: { q: "Gummi/Elastomer-Bereich?", h: "", os: [
+    { l: "Technischer Gummi / Vulkanisation", nx: { r: [20,21,17,22], note: "Perkadox/Trigonox (Peroxide Vulkanisation), Elaztobond/HRJ (Gummi-Metall), Silox ZnO Actif (Aktivator!), Lowinox." } },
+    { l: "Reifen / Reifenkord", nx: { r: [21,20,22,17], note: "Elaztobond/HRJ (SI Group – Weltmarktführer Cord-Haftung!), Peroxide, Antioxidantien, Silox ZnO." } },
+    { l: "Schäume / TPE", nx: { r: [11,20,22,33], note: "Poly BD (Flexibilisierung), Peroxide, Antioxidantien, EUROLITE (UV außen)." } },
+  ]},
+  plastics: { q: "Kunststoff-Anwendung?", h: "", os: [
+    { l: "Thermoplaste (PP/PE/PA/ABS)", nx: { r: [22,32,33,15], note: "Lowinox/EURONOX (Antioxidantien Verarbeitung – sehr relevant!), EUROLITE (UV außen), Nanocyl (ESD/Leitfähigkeit)." } },
+    { l: "Faserverbund / Composites GFK/CFK", nx: { r: [41,12,43,20], note: "SIL Silane (Faser-Matrix – kritisch!), Polyimid P84 (Hochtemperatur), HGM (syntaktisch), Peroxide." } },
+    { l: "Kabelisolierung", nx: { r: [20,22,33,15], note: "Trigonox (PE-Vernetzung), Lowinox (Kabelmantel), EUROLITE (UV), Nanocyl (leitfähige Compounds)." } },
+  ]},
+  construction: { q: "Bauchemie-Segment?", h: "", os: [
+    { l: "Beton / Fertigbeton", nx: { r: [45,42], note: "CC RA (Luftporen Frostschutz), CC AS (Anti-Schwindrisse), CC DF (Entschäumer), CC RT (Verzögerer). Aqualic FN-001 als EDTA-Ersatz." } },
+    { l: "Fassade / Mineralische Flächen", nx: { r: [46,39,2,33], note: "Ricobuild/Ricostone (Hydrophobierung), ADINS Clean (Photokatalyse), Neboplast, EUROLITE." } },
+    { l: "Bitumen / Asphalt", nx: { r: [45,28,14], note: "CC RA (Bitumenemulsionen), Silwet (Spreitung/Benetzung), Nebotint WH (IR-reflektierend)." } },
+    { l: "Estrich / Bodensystem", nx: { r: [45,41,37,43], note: "CC-Serie, SIL Silane (Primer Epoxy-Boden), Rheologie, HGM." } },
+  ]},
+  printing: { q: "Art der Drucktinte?", h: "", os: [
+    { l: "Flexo / Tiefdruck lösemittelbasiert", nx: { r: [13,14,7,16], note: "Nebochips NCA-C (Flexo) oder NCE-C (Tiefdruck), Nebotint M (aromatenarm), Phenolharze SI Group, Colourplex." } },
+    { l: "Siebdrucktinte", nx: { r: [13,14,16,33], note: "Nebochips VIN (Standard), Nebotint, Colourplex (Keramiksiebdruck), EUROLITE." } },
+    { l: "Wasserbasierte Drucktinte", nx: { r: [13,14,27,30], note: "Nebochips ACW (Acrylat WB), Nebotint U (binderfrei), Softanol, Entschäumer RICCI." } },
+  ]},
+};

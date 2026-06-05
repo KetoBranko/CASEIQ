@@ -1,0 +1,119 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f2f5f9;
+}
+
+.app-header {
+  background: linear-gradient(135deg, #1e3a6e 0%, #1d4ed8 100%);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 2px 12px rgba(29,78,216,0.25);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-logo {
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+}
+
+.header-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+}
+
+.header-title .dot {
+  color: rgba(255,255,255,0.5);
+  margin: 0 1px;
+}
+
+.header-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 1px;
+  font-weight: 400;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-badge {
+  font-size: 10px;
+  padding: 3px 9px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 20px;
+  color: rgba(255,255,255,0.8);
+  font-family: 'DM Mono', monospace;
+}
+
+.app-nav {
+  display: flex;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(17,24,39,0.05);
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.nav-btn i { font-size: 18px; }
+
+.nav-btn:hover {
+  color: var(--text2);
+  background: var(--bg3);
+}
+
+.nav-btn.active {
+  color: var(--blue);
+  border-bottom-color: var(--blue);
+  background: var(--blue-light);
+}
+
+.app-main {
+  flex: 1;
+  padding: 18px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .app-main { padding: 12px; }
+  .header-sub { display: none; }
+}
