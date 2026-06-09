@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { PRODUCTS, SEG_META, PORTFOLIO_FOR_AI } from '../data/products'
+import { HYDROLAR_PRODUCTS } from '../data/hydrolar'
+import { SILAN_PRODUCTS } from '../data/silane'
 import ProductModal from './ProductModal'
 import './CustomerAnalysis.css'
 
@@ -14,16 +16,31 @@ const EXAMPLES = [
   'Wilckens Farben GmbH',
 ]
 
-const SYSTEM_PROMPT = `Du bist ein erfahrener technischer Sales-Berater für Rohstoffe in der Chemieindustrie bei Safic-Alcan.
+// Hydrolar als kompakter KI-Kontext
+const HYDROLAR_FOR_AI = HYDROLAR_PRODUCTS.map(p =>
+  `${p.id} (${p.base}, Tg ${p.tg}°C, Dehnung ${p.elong}%, Apps: ${p.apps})`
+).join(' | ')
+
+// Silane als kompakter KI-Kontext
+const SILANE_FOR_AI = SILAN_PRODUCTS.map(p =>
+  `${p.id}=${p.handelsname}/${p.evonikAlias} (${p.klasse}, Substrate: ${p.substrate.slice(0,3).join('/')}, Fkt: ${p.funktionenCoatings.concat(p.funktionenAS).slice(0,2).join('/')})`
+).join(' | ')
+
+const SYSTEM_PROMPT = `Du bist ein erfahrener technischer Sales-Berater für Rohstoffe in der Chemieindustrie bei Safic-Alcan Deutschland.
 Analysiere den genannten Kunden und antworte AUSSCHLIESSLICH als gültiges JSON-Objekt. Kein Text, keine Markdown-Backticks, kein Kommentar vor oder nach dem JSON.
 
 Format:
-{"customer":"Kundenname","segs":[{"label":"Coatings","cls":"seg-c"}],"intro":"3-4 Sätze was der Kunde macht","items":[{"id":2,"name":"Produktname","sup":"Lieferant","why":"Kurze Begründung","pct":85}],"einstieg":"2-3 konkrete Einstiegsfragen als einfacher Text mit Zeilenumbrüchen","wettbewerb":"Wettbewerb und Herausforderungen"}
+{"customer":"Kundenname","segs":[{"label":"Coatings","cls":"seg-c"}],"intro":"3-4 Sätze was der Kunde macht","items":[{"type":"product","id":2,"name":"Produktname","sup":"Lieferant","why":"Kurze Begründung","pct":85},{"type":"hydrolar","id":"HC208","name":"HC208","sup":"COIM Hydrolar","why":"Kurze Begründung","pct":75},{"type":"silan","id":"EGM38","name":"DYNASYLAN GLYMO","sup":"Safic-Chem SIL","why":"Kurze Begründung","pct":80}],"einstieg":"2-3 konkrete Einstiegsfragen als einfacher Text mit Zeilenumbrüchen","wettbewerb":"Wettbewerb und Herausforderungen"}
 
 Regeln:
 - segs: Nur aus [{"label":"Coatings","cls":"seg-c"}, {"label":"Adhesives","cls":"seg-a"}, {"label":"Industrial","cls":"seg-i"}]
-- items: Max 10 Produkte, nur wirklich relevante
+- items: Max 18 Produkte gesamt. Mische alle drei Produkttypen (product/hydrolar/silan) je nach Relevanz für den Kunden.
+- type "product": id ist eine Zahl aus dem Safic-Alcan Portfolio
+- type "hydrolar": id ist ein String wie "HC208", "HR115" aus dem Hydrolar-Portfolio
+- type "silan": id ist ein String wie "EGM38", "AME02" aus dem Silan-Portfolio
 - pct: 0-100 Wahrscheinlichkeit (70+=sehr wahrscheinlich, 40-69=wahrscheinlich, unter 40=unwahrscheinlich)
+- Silane empfehlen bei: Haftungsproblemen auf Glas/Metall/Mineralfüllstoffen, Korrosionsschutz, Epoxy/PU-Systemen, MS-Polymer, Polysulfid-Dichtstoffen, UV-Coatings, Composites
+- Hydrolar empfehlen bei: wasserbasierte Lacke, PU-Dispersionen, Holz/Metall/Leder-Beschichtungen, WB-Klebstoffe
 - Alle Texte auf Deutsch, präzise, keine Floskeln`
 
 export default function CustomerAnalysis() {
@@ -59,11 +76,17 @@ export default function CustomerAnalysis() {
         },
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 1500,
+          max_tokens: 3000,
           system: SYSTEM_PROMPT,
           messages: [{
             role: 'user',
-            content: `Analysiere diesen Kunden für Safic-Alcan CASE Sales: "${query}"\n\nPortfolio IDs: ${PORTFOLIO_FOR_AI}`
+            content: `Analysiere diesen Kunden für Safic-Alcan CASE Sales: "${query}"
+
+Safic-Alcan Portfolio IDs (Zahlen): ${PORTFOLIO_FOR_AI}
+
+Hydrolar COIM WB-PU-Dispersionen: ${HYDROLAR_FOR_AI}
+
+Safic-Chem SIL Silane: ${SILANE_FOR_AI}`
           }]
         })
       })
@@ -90,14 +113,13 @@ export default function CustomerAnalysis() {
     if (!result) return
     const win = window.open('', '_blank')
     const items = (result.items || []).map(item => {
-      const prod = PRODUCTS.find(p => p.id === item.id)
-      const name = prod ? prod.n : item.name
       const pct = item.pct || 0
       const color = pct >= 70 ? '#2e7d52' : pct >= 40 ? '#b06b10' : '#a32d2d'
       const label = pct >= 70 ? 'Sehr wahrscheinlich' : pct >= 40 ? 'Wahrscheinlich' : 'Unwahrscheinlich'
+      const typeLabel = item.type === 'hydrolar' ? '💧 Hydrolar' : item.type === 'silan' ? '⚗️ Silan' : '🧪'
       return `
         <tr>
-          <td><strong>${name}</strong><br><small style="color:#666">${item.sup||''}</small></td>
+          <td><strong>${item.name}</strong><br><small style="color:#666">${item.sup||''} ${typeLabel}</small></td>
           <td>${item.why}</td>
           <td>
             <span style="color:${color};font-weight:600">${label}</span><br>
@@ -123,7 +145,6 @@ export default function CustomerAnalysis() {
         table { width: 100%; border-collapse: collapse; font-size: 12px; }
         th { background: #f0f2f5; padding: 8px; text-align: left; border-bottom: 2px solid #ddd; font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; color: #666; }
         td { padding: 8px; border-bottom: 1px solid #eee; vertical-align: top; }
-        tr:hover td { background: #fafbfc; }
         .segs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
         .seg { padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; }
         .seg-c { background: #e8f0fc; color: #1a3a5c; }
@@ -132,7 +153,6 @@ export default function CustomerAnalysis() {
         .einstieg { background: #f0f8f0; padding: 12px 14px; border-radius: 6px; border-left: 3px solid #2e7d52; white-space: pre-line; line-height: 1.7; }
         .wettbewerb { background: #fff8f0; padding: 12px 14px; border-radius: 6px; border-left: 3px solid #b06b10; line-height: 1.6; }
         .footer { margin-top: 30px; padding-top: 14px; border-top: 1px solid #eee; font-size: 11px; color: #999; display: flex; justify-content: space-between; }
-        @media print { body { padding: 20px; } }
       </style>
     </head><body>
       <div class="header">
@@ -145,7 +165,7 @@ export default function CustomerAnalysis() {
         <div class="intro">${result.intro||''}</div>
       </div>
       <div class="section">
-        <div class="label">Portfolio-Match mit Wahrscheinlichkeit</div>
+        <div class="label">Portfolio-Match (inkl. Hydrolar & Silane)</div>
         <table>
           <thead><tr><th style="width:32%">Produkt</th><th style="width:42%">Warum relevant</th><th style="width:26%">Wahrscheinlichkeit</th></tr></thead>
           <tbody>${items}</tbody>
@@ -194,8 +214,8 @@ export default function CustomerAnalysis() {
       <div className="ca-intro">
         <i className="ti ti-bolt" />
         <div>
-          <strong>KI-Schnellanalyse:</strong> Firmenname oder Website eingeben → direkte Produktvorschläge mit Wahrscheinlichkeiten erscheinen hier im Tool.
-          {apiKey && <span className="key-status"><i className="ti ti-check" /> API Key gespeichert</span>}
+          <strong>KI-Schnellanalyse:</strong> Firmenname eingeben → Produktvorschläge aus gesamtem Portfolio inkl. Hydrolar & Silane.
+          {apiKey && <span className="key-status"><i className="ti ti-check" /> API Key gespeichert · <span className="key-change" onClick={() => setShowKeyInput(true)}>ändern</span></span>}
           {!apiKey && <span className="key-missing" onClick={() => setShowKeyInput(true)}><i className="ti ti-key" /> API Key einrichten</span>}
         </div>
       </div>
@@ -291,9 +311,26 @@ function AnalysisResult({ result, onProductClick, onExport }) {
               {(result.items || []).map((item, i) => {
                 const pct = Math.round(item.pct || 50)
                 const a = ampel(pct)
-                const prod = PRODUCTS.find(p => p.id === item.id)
-                const name = prod ? prod.n : item.name
-                const sup = prod ? prod.sup : (item.sup || '')
+
+                // Produkt aus dem richtigen Pool holen
+                let name = item.name
+                let sup = item.sup || ''
+                let prod = null
+                let typeIcon = null
+
+                if (item.type === 'hydrolar') {
+                  const hp = HYDROLAR_PRODUCTS.find(p => p.id === item.id)
+                  if (hp) { name = hp.id; sup = `COIM Hydrolar · ${hp.base}` }
+                  typeIcon = <span style={{fontSize:'10px',background:'#dbeafe',color:'#1d4ed8',padding:'1px 6px',borderRadius:'4px',marginLeft:'6px',fontWeight:600}}>💧 Hydrolar</span>
+                } else if (item.type === 'silan') {
+                  const sp = SILAN_PRODUCTS.find(p => p.id === item.id)
+                  if (sp) { name = `${sp.id} · ${sp.handelsname}`; sup = `Safic-Chem SIL · ${sp.evonikAlias}` }
+                  typeIcon = <span style={{fontSize:'10px',background:'#ede9fe',color:'#5b21b6',padding:'1px 6px',borderRadius:'4px',marginLeft:'6px',fontWeight:600}}>⚗️ Silan</span>
+                } else {
+                  prod = PRODUCTS.find(p => p.id === item.id)
+                  if (prod) { name = prod.n; sup = prod.sup }
+                }
+
                 return (
                   <tr key={i}>
                     <td>
@@ -302,7 +339,7 @@ function AnalysisResult({ result, onProductClick, onExport }) {
                         onClick={() => prod && onProductClick(prod)}
                         style={{ cursor: prod ? 'pointer' : 'default' }}
                       >
-                        {name}
+                        {name}{typeIcon}
                       </div>
                       <div className="ar-prod-sup">{sup}</div>
                     </td>
