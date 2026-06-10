@@ -217,7 +217,7 @@ Deutsch, konkret, keine Floskeln.`
             />
           </div>
           <button className="mr-btn-search" onClick={() => search(query)} disabled={loading || !query.trim()}>
-            {loading ? <><span className="mr-spinner" /> Suche…</> : <><i className="ti ti-arrow-right" /> Analysieren</>}
+            {loading ? <><span className="mr-spinner" /> Suche...</> : <><i className="ti ti-arrow-right" /> Analysieren</>}
           </button>
         </div>
 
@@ -242,7 +242,7 @@ Deutsch, konkret, keine Floskeln.`
           <div className="mr-loading-inner">
             <span className="mr-spinner-lg" />
             <div>
-              <div className="mr-loading-title">Durchsuche aktuelle Quellen…</div>
+              <div className="mr-loading-title">Durchsuche aktuelle Quellen...</div>
               <div className="mr-loading-sub">Web Search · Marktdaten · News</div>
             </div>
           </div>

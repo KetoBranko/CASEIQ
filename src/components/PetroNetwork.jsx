@@ -461,14 +461,26 @@ ro.observe(cwEl);
 </body>
 </html>`
 
+import { useEffect, useRef } from 'react'
+
 export default function PetroNetwork() {
+  const iframeRef = useRef(null)
+
+  useEffect(() => {
+    const blob = new Blob([HTML], { type: 'text/html' })
+    const url = URL.createObjectURL(blob)
+    if (iframeRef.current) {
+      iframeRef.current.src = url
+    }
+    return () => URL.revokeObjectURL(url)
+  }, [])
+
   return (
     <div className="pn-wrap">
       <iframe
-        srcDoc={HTML}
+        ref={iframeRef}
         className="pn-frame"
         title="Petrochemicals Network"
-        sandbox="allow-scripts"
       />
     </div>
   )
