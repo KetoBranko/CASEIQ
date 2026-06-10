@@ -443,7 +443,19 @@ function goTo(id){sg.style.display='none';se.value='';selectNode(id);const p=pos
 document.getElementById('btn-reset').addEventListener('click',()=>{selectedId=null;hoverId=null;centerLayout();drawAll();updateInfo();});
 document.getElementById('zin').addEventListener('click',()=>{scale=Math.min(5,scale*1.2);drawAll();});
 document.getElementById('zout').addEventListener('click',()=>{scale=Math.max(0.18,scale*0.83);drawAll();});
-const ro=new ResizeObserver(()=>{const first=Object.keys(pos).length===0;W=cwEl.clientWidth;H=cwEl.clientHeight;[canvas,bgCanvas].forEach(c=>{c.width=W;c.height=H;});if(first)initLayout();else centerLayout();drawAll();});
+function resize(){
+  W=cwEl.clientWidth;H=cwEl.clientHeight;
+  [canvas,bgCanvas].forEach(c=>{c.width=W;c.height=H;});
+}
+function start(){
+  resize();
+  if(W>0&&H>0){initLayout();drawAll();}
+}
+// Try immediately, then again after short delays to handle iframe timing
+start();
+setTimeout(start,100);
+setTimeout(start,400);
+const ro=new ResizeObserver(()=>{const first=Object.keys(pos).length===0;resize();if(first)initLayout();else centerLayout();drawAll();});
 ro.observe(cwEl);
 </script>
 </body>
