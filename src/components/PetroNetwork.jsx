@@ -195,7 +195,7 @@ export default function PetroNetwork() {
     bgCtx.clearRect(0,0,W,H)
 
     // Dot grid
-    bgCtx.save(); bgCtx.fillStyle='rgba(0,0,0,0.05)'
+    bgCtx.save(); bgCtx.fillStyle='rgba(0,0,0,0.08)'
     const step=32*s.scale, sx=((s.ox%step)+step)%step, sy=((s.oy%step)+step)%step
     for(let x=sx;x<W;x+=step) for(let y=sy;y<H;y+=step) { bgCtx.beginPath(); bgCtx.arc(x,y,0.85,0,Math.PI*2); bgCtx.fill() }
     bgCtx.restore()
@@ -212,7 +212,7 @@ export default function PetroNetwork() {
       const dx=p2.x-p1.x, dy=p2.y-p1.y, d=Math.sqrt(dx*dx+dy*dy)||1
       const x1=p1.x+dx/d*ra, y1=p1.y+dy/d*ra, x2=p2.x-dx/d*(rb+3), y2=p2.y-dy/d*(rb+3)
 
-      let color='rgba(0,0,0,0.08)', alpha=1, width=0.8
+      let color='#94a3b8', alpha=0.6, width=1.2
       if(s.selectedId) {
         if((up.has(a)&&(up.has(b)||b===s.selectedId))||(a===s.selectedId&&up.has(b))) { color='#2860c8'; alpha=0.9; width=1.6 }
         else if((a===s.selectedId&&dn.has(b))||(dn.has(a)&&dn.has(b))) { color='#1e8040'; alpha=0.9; width=1.6 }
