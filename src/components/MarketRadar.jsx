@@ -141,7 +141,7 @@ Alle Texte auf Deutsch. Keine Floskeln, nur konkrete Fakten und Einschätzungen.
             <input
               type="text"
               className="mr-input"
-              placeholder="Marktthema eingeben, z.B. „TiO₂ Preise 2025" oder „Klebstoffmarkt Deutschland"…"
+              placeholder="Marktthema eingeben, z.B. TiO2 Preise 2025 oder Klebstoffmarkt Deutschland..."
               value={query}
               onChange={e => setQuery(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && search(query)}
