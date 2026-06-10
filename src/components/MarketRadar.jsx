@@ -104,7 +104,8 @@ Alle Texte auf Deutsch. Keine Floskeln, nur konkrete Fakten und Einschätzungen.
       }
 
       const data = await response.json()
-      const text = data.content.map(c => c.type === 'text' ? c.text : '').filter(Boolean).join('')
+      const raw = data.content.map(c => c.type === 'text' ? c.text : '').filter(Boolean).join('')
+      const text = raw.replace(/<cite[^>]*>/g, '').replace(/<\/cite>/g, '')
       setResult(parseResult(text))
     } catch (e) {
       setError(e.message)
