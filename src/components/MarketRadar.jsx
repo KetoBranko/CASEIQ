@@ -44,6 +44,87 @@ function parseResult(text) {
   return { type: 'text', data: text }
 }
 
+// ─── PDF Export ──────────────────────────────────────────────────────────────
+
+function exportMarketPDF(query, data) {
+  const d = data || {}
+  const html = `<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<title>Marktanalyse – ${query}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;font-size:13px;color:#1a1a2e;padding:40px;background:#fff}
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:16px;border-bottom:3px solid #1e3a6e;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.hdr-l h1{font-size:20px;font-weight:800;color:#1e3a6e}
+.hdr-l .sub{font-size:12px;color:#64748b;margin-top:3px}
+.hdr-r{text-align:right;font-size:12px;color:#64748b}
+.hdr-r strong{color:#1e3a6e;font-size:13px;display:block}
+.summary{background:#eff6ff;border-left:4px solid #1e3a6e;padding:12px 15px;border-radius:0 8px 8px 0;font-size:13px;color:#1e293b;margin-bottom:18px;line-height:1.7}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px}
+.card-green{background:#f0fdf4;border-color:#bbf7d0}
+.card-yellow{background:#fffbeb;border-color:#fde68a}
+.card-blue{background:#eff6ff;border-color:#bfdbfe;grid-column:1/-1}
+.card-title{font-size:11px;font-weight:700;color:#0f172a;margin-bottom:8px}
+ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:5px}
+li{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:#334155;line-height:1.5}
+.dot{width:6px;height:6px;border-radius:50%;background:#1d4ed8;flex-shrink:0;margin-top:4px}
+.dot.g{background:#15803d}.dot.y{background:#b45309}
+.tips{display:flex;flex-direction:column;gap:7px}
+.tip{display:flex;gap:8px;font-size:12px;color:#1e3a6e;line-height:1.6}
+.tip-nr{width:20px;height:20px;border-radius:50%;background:#1d4ed8;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sources{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.src{font-size:10px;color:#64748b;background:#f1f5f9;border:1px solid #e2e8f0;padding:1px 7px;border-radius:4px}
+.query-box{font-size:11px;color:#64748b;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #f1f5f9}
+.footer{margin-top:32px;padding-top:10px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;font-size:10px;color:#94a3b8}
+@media print{body{padding:20px}}
+</style>
+</head><body>
+<div class="hdr">
+  <div class="hdr-l">
+    <h1>Markt & Trends</h1>
+    <div class="sub">CASE·IQ Market Analysis · Safic-Alcan Deutschland</div>
+  </div>
+  <div class="hdr-r">
+    <strong>Safic-Alcan Deutschland GmbH</strong>
+    <span>CASE & Industrial Specialties</span><br>
+    <span>${new Date().toLocaleDateString('de-DE')}</span>
+  </div>
+</div>
+
+<div class="query-box">Suchanfrage: ${query}</div>
+
+${d.summary ? `<div class="summary">${d.summary}</div>` : ''}
+
+<div class="grid">
+${d.keyPoints?.length ? `<div class="card"><div class="card-title">Wichtigste Erkenntnisse</div><ul>${d.keyPoints.map(p=>`<li><span class="dot"></span>${p}</li>`).join('')}</ul></div>` : ''}
+${d.trends?.length ? `<div class="card"><div class="card-title">Aktuelle Trends</div><ul>${d.trends.map(t=>`<li><span class="dot"></span>${t}</li>`).join('')}</ul></div>` : ''}
+${d.opportunities?.length ? `<div class="card card-green"><div class="card-title">Chancen fuer Safic-Alcan</div><ul>${d.opportunities.map(o=>`<li><span class="dot g"></span>${o}</li>`).join('')}</ul></div>` : ''}
+${d.risks?.length ? `<div class="card card-yellow"><div class="card-title">Risiken & Herausforderungen</div><ul>${d.risks.map(r=>`<li><span class="dot y"></span>${r}</li>`).join('')}</ul></div>` : ''}
+</div>
+
+${d.salesTips?.length ? `<div class="card card-blue"><div class="card-title">Sales-Tipps fuer dein naechstes Kundengespräch</div><div class="tips">${d.salesTips.map((t,i)=>`<div class="tip"><span class="tip-nr">${i+1}</span><span>${t}</span></div>`).join('')}</div></div>` : ''}
+
+${d.sources?.length ? `<div class="sources"><span style="font-size:10px;color:#94a3b8;font-weight:700;margin-right:4px">Quellen:</span>${d.sources.map(s=>`<span class="src">${s}</span>`).join('')}</div>` : ''}
+
+<div class="footer">
+  <span>Safic-Alcan Deutschland GmbH · CASE·IQ Sales Tool v2.4</span>
+  <span>Generated ${new Date().toLocaleString('de-DE')}</span>
+</div>
+</body></html>`
+
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `MarketAnalysis_${query.slice(0,30).replace(/\s+/g,'_')}_${new Date().toISOString().split('T')[0]}.html`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
+
 // ─── Hauptkomponente ──────────────────────────────────────────────────────────
 
 export default function MarketRadar() {
@@ -181,6 +262,11 @@ Deutsch, konkret, keine Floskeln.`
         <div className="mr-result">
           <div className="mr-result-query">
             <i className="ti ti-search" /> {activeQuery}
+            {result.type === 'structured' && (
+              <button className="mr-btn-pdf" onClick={() => exportMarketPDF(activeQuery, result.data)}>
+                <i className="ti ti-download" /> PDF
+              </button>
+            )}
           </div>
 
           {result.type === 'structured' ? (

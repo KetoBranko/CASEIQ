@@ -180,3 +180,15 @@
 .mr-messe-name { font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 6px; line-height: 1.3; }
 .mr-messe-meta { display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: #64748b; }
 .mr-messe-meta span { display: flex; align-items: center; gap: 4px; }
+
+/* PDF Button */
+.mr-result-query {
+  justify-content: space-between;
+}
+.mr-btn-pdf {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 12px; border-radius: 7px; border: 1px solid #bfdbfe;
+  background: #eff6ff; color: #1d4ed8; font-size: 11px; font-weight: 700;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+}
+.mr-btn-pdf:hover { background: #dbeafe; }
