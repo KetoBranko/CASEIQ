@@ -6,6 +6,7 @@ import CustomerAnalysis from './components/CustomerAnalysis'
 import Hydrolar from './components/Hydrolar'
 import Silane from './components/Silane'
 import VisitReport from './components/VisitReport'
+import MarketRadar from './components/MarketRadar'
 
 const TABS = [
   { id: 'db',       label: 'Produktdatenbank', icon: 'ti-database' },
@@ -14,6 +15,7 @@ const TABS = [
   { id: 'qa',       label: 'Gesprächsführer',  icon: 'ti-route' },
   { id: 'ai',       label: 'Kundenrecherche',  icon: 'ti-building-factory-2' },
   { id: 'visit',    label: 'Besuchsbericht',   icon: 'ti-clipboard-text' },
+  { id: 'market',   label: 'Markt & Trends',   icon: 'ti-trending-up' },
 ]
 
 export default function App() {
@@ -35,7 +37,7 @@ export default function App() {
           </div>
         </div>
         <div className="header-right">
-          <div className="header-badge">v2.3</div>
+          <div className="header-badge">v2.4</div>
         </div>
       </header>
 
@@ -59,6 +61,7 @@ export default function App() {
         {tab === 'qa'       && <QAGuide />}
         {tab === 'ai'       && <CustomerAnalysis />}
         {tab === 'visit'    && <VisitReport />}
+        {tab === 'market'   && <MarketRadar />}
       </main>
     </div>
   )
