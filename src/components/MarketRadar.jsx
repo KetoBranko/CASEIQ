@@ -63,22 +63,9 @@ export default function MarketRadar() {
     setResult(null)
     setActiveQuery(searchQuery)
 
-    const systemPrompt = `Du bist ein erfahrener Marktanalyst für die chemische Industrie, spezialisiert auf den CASE-Markt (Coatings, Adhesives, Sealants, Elastomers) in der DACH-Region und Europa. 
-
-Analysiere die Anfrage mit aktuellen Web-Suchergebnissen und antworte als strukturiertes JSON:
-
-{
-  "summary": "2-3 Sätze Executive Summary auf Deutsch",
-  "keyPoints": ["Wichtigster Punkt 1", "Wichtigster Punkt 2", "Wichtigster Punkt 3", "Wichtigster Punkt 4"],
-  "trends": ["Trend 1", "Trend 2", "Trend 3"],
-  "opportunities": ["Chance für Safic-Alcan 1", "Chance für Safic-Alcan 2"],
-  "risks": ["Risiko/Herausforderung 1", "Risiko/Herausforderung 2"],
-  "salesTips": ["Konkreter Sales-Tipp 1", "Konkreter Sales-Tipp 2"],
-  "sources": ["Quelle 1", "Quelle 2"]
-}
-
-Fokus auf: aktuelle Marktdaten, Relevanz für Safic-Alcan Deutschland, konkrete Sales-Insights.
-Alle Texte auf Deutsch. Keine Floskeln, nur konkrete Fakten und Einschätzungen.`
+    const systemPrompt = `CASE-Markt Analyst für Safic-Alcan Deutschland. Nutze Web-Suche und antworte NUR als JSON:
+{"summary":"2-3 Sätze","keyPoints":["Punkt1","Punkt2","Punkt3"],"trends":["T1","T2"],"opportunities":["O1","O2"],"risks":["R1","R2"],"salesTips":["Tipp1","Tipp2"],"sources":["Q1"]}
+Deutsch, konkret, keine Floskeln.`
 
     try {
       const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -90,7 +77,7 @@ Alle Texte auf Deutsch. Keine Floskeln, nur konkrete Fakten und Einschätzungen.
           'anthropic-dangerous-direct-browser-access': 'true',
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-5',
+          model: 'claude-haiku-4-5-20251001',
           max_tokens: 3000,
           system: systemPrompt,
           tools: [{ type: 'web_search_20250305', name: 'web_search' }],
