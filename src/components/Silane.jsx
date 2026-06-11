@@ -177,6 +177,7 @@ const PRODUKTE = [
     harzsystemeAS: [],
     positionierung: 'Kein organofunktioneller Rest → reine SiO₂-Bildung nach Hydrolyse. Nischenanwendung für Sol-Gel-Technologie und Bautenschutz. Vorstufe zu ATE73.',
     ampel: 'Nicht in der Coatings/A&S-Empfehlungsmatrix von Safic-Chem. Gesprächsführung auf Sol-Gel und anorganische Bindersysteme begrenzen.',
+    aliases: ['TES 28', 'tes28', 'ethylsilicat'],
   },
   {
     id: 'ATE73',
@@ -196,6 +197,7 @@ const PRODUKTE = [
     harzsystemeAS: [],
     positionierung: 'Höherer SiO₂-Gehalt als monomeres TEOS. Hauptargument im CASE-Bereich: Bindemittel in anorganischen Zinkstaubbeschichtungen (Schiffbau, Stahl, Brücken).',
     ampel: 'Stärkstes CASE-Argument: Zinkstaub-Primer. Differenzierung über Preis und Lieferzuverlässigkeit.',
+    aliases: ['TES 40', 'tes40', 'ethyl silicate 40', 'silbond 40', 'ethylsilicat 40'],
   },
 ]
 
@@ -515,7 +517,8 @@ export default function Silane() {
       p.evonikAlias.toLowerCase().includes(q) ||
       p.chemName.toLowerCase().includes(q) ||
       p.cas.includes(q) ||
-      p.klasse.toLowerCase().includes(q)
+      p.klasse.toLowerCase().includes(q) ||
+      (p.aliases || []).some(a => a.toLowerCase().includes(q))
     )
   })
 
