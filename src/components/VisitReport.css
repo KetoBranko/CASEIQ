@@ -239,3 +239,57 @@
 .vrp-de-notes .vrp-section-title { color: #a16207; }
 .vrp-de-block { margin-bottom: 10px; font-size: 13px; color: #78350f; line-height: 1.6; }
 .vrp-de-label { font-size: 10px; text-transform: uppercase; color: #a16207; font-weight: 700; margin-bottom: 3px; }
+
+/* Pro-Produkt Notizen */
+.vr-prod-notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+.vr-prod-note-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.vr-prod-note-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+  flex-wrap: wrap;
+}
+.vr-prod-note-sup {
+  font-size: 10px;
+  color: #94a3b8;
+  flex: 1;
+}
+.vr-prod-note-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  margin-left: auto;
+}
+.vr-prod-note-remove:hover { color: #dc2626; }
+.vr-prod-note-item textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: #0f172a;
+  background: #fff;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+}
+.vr-prod-note-item textarea:focus {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 3px rgba(147,197,253,0.2);
+}

@@ -25,7 +25,7 @@ const EMPTY_FORM = {
   scContact: 'Branko Premužak',
   participants: '', segments: [],
   objectives: '', discussion: '',
-  productsDiscussed: [], technicalDetails: '',
+  productsDiscussed: [], productNotes: {}, technicalDetails: '',
   nextSteps: '', nextVisitDate: '',
   opportunityLevel: 'medium', estimatedVolume: 'Unbekannt', estimatedTimeline: '',
 }
@@ -39,28 +39,33 @@ function getAllProducts() {
 }
 
 function buildPrompt(form) {
-  const prods = form.productsDiscussed.map(id => {
-    const p = getAllProducts().find(x => x.id === id)
-    return p ? `${p.label} (${p.sup})` : id
-  }).join(', ')
+  const allP = getAllProducts()
+  const prodsWithNotes = form.productsDiscussed.map(id => {
+    const p = allP.find(x => x.id === id)
+    const note = form.productNotes?.[id] || ''
+    return p ? `${p.label} (${p.sup})${note ? ': ' + note : ''}` : id
+  }).join('\n')
   return `You are writing a professional visit report for Safic-Alcan Deutschland GmbH, a specialty chemicals distributor.
 Translate and format the following information into a professional English visit report.
 Be precise, professional, use chemical/technical terminology correctly.
 Return ONLY a JSON object, no markdown, no backticks.
 
 Format:
-{"objectives":"...","discussion":"...","technicalDetails":"...","nextSteps":"...","summary":"One sentence executive summary"}
+{"objectives":"...","discussion":"...","productDetails":"...","technicalDetails":"...","nextSteps":"...","summary":"One sentence executive summary"}
 
 Input:
 Customer: ${form.customer}
 Date: ${form.date}
 Segments: ${form.segments.join(', ')}
-Products discussed: ${prods || 'none specified'}
+Products discussed with notes (German):
+${prodsWithNotes || 'none specified'}
 Objectives (German): ${form.objectives}
 Discussion (German): ${form.discussion}
 Technical details (German): ${form.technicalDetails}
 Next steps (German): ${form.nextSteps}
-Opportunity: ${form.opportunityLevel}, Volume: ${form.estimatedVolume}, Timeline: ${form.estimatedTimeline}`
+Opportunity: ${form.opportunityLevel}, Volume: ${form.estimatedVolume}, Timeline: ${form.estimatedTimeline}
+
+For productDetails: write a structured paragraph per product in English, based on the German notes provided.`
 }
 
 // ─── PDF-Generierung via Blob (funktioniert in allen Browsern) ────────────────
@@ -137,6 +142,7 @@ ${en.discussion ? `<div class="sec"><div class="sec-title">Discussion</div><div 
 ${en.technicalDetails ? `<div class="sec"><div class="sec-title">Technical Details</div><div class="content">${en.technicalDetails}</div></div>` : ''}
 
 ${prods.length ? `<div class="sec"><div class="sec-title">Products Discussed</div><div class="prods">${prods.map(p=>`<span class="prod ${p.type==='hydrolar'?'hl':p.type==='silan'?'sil':''}">${p.label}</span>`).join('')}</div></div>` : ''}
+${en.productDetails ? `<div class="sec"><div class="sec-title">Product Details</div><div class="content">${en.productDetails}</div></div>` : ''}
 
 ${en.nextSteps ? `<div class="sec"><div class="sec-title">Next Steps</div><div class="content">${en.nextSteps}</div></div>` : ''}
 
@@ -305,7 +311,7 @@ export default function VisitReport() {
       segments: form.segments, productsDiscussed: form.productsDiscussed,
       opportunityLevel: form.opportunityLevel, estimatedVolume: form.estimatedVolume,
       estimatedTimeline: form.estimatedTimeline, nextVisitDate: form.nextVisitDate,
-      formDE: { objectives: form.objectives, discussion: form.discussion, technicalDetails: form.technicalDetails, nextSteps: form.nextSteps },
+      formDE: { objectives: form.objectives, discussion: form.discussion, technicalDetails: form.technicalDetails, nextSteps: form.nextSteps, productNotes: form.productNotes },
       generatedEN,
     }
     saveReports([report, ...reports])
@@ -447,8 +453,26 @@ export default function VisitReport() {
             )}
           </div>
           {form.productsDiscussed.length > 0 && (
-            <div className="vr-selected-prods">
-              {form.productsDiscussed.map(id => { const p=getAllProducts().find(x=>x.id===id); return p?<span key={id} className={`vr-prod-tag vr-prod-${p.type}`}>{p.label}<button onClick={()=>toggleProduct(id)}>×</button></span>:null })}
+            <div className="vr-prod-notes-list">
+              {form.productsDiscussed.map(id => {
+                const p = getAllProducts().find(x => x.id === id)
+                if (!p) return null
+                return (
+                  <div key={id} className="vr-prod-note-item">
+                    <div className="vr-prod-note-header">
+                      <span className={`vr-prod-tag vr-prod-${p.type}`}>{p.label}</span>
+                      <span className="vr-prod-note-sup">{p.sup}</span>
+                      <button className="vr-prod-note-remove" onClick={() => toggleProduct(id)}>×</button>
+                    </div>
+                    <SpeechTextarea
+                      rows={2}
+                      value={form.productNotes?.[id] || ''}
+                      onChange={v => updateForm('productNotes', { ...form.productNotes, [id]: v })}
+                      placeholder={`Was wurde zu ${p.label} besprochen? Status, Interesse, Muster, Einwände...`}
+                    />
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>
@@ -557,6 +581,7 @@ export default function VisitReport() {
 
           {prods.length>0 && <div className="vrp-section"><div className="vrp-section-title">Products Discussed</div><div className="vrp-prods">{prods.map(p=><span key={p.id} className={`vr-prod-tag vr-prod-${p.type}`}>{p.label} <span style={{opacity:0.6,fontSize:'10px'}}>({p.sup})</span></span>)}</div></div>}
 
+          {generatedEN?.productDetails && <div className="vrp-section"><div className="vrp-section-title">Product Details</div><div className="vrp-content">{generatedEN.productDetails}</div></div>}
           {generatedEN?.nextSteps && <div className="vrp-section"><div className="vrp-section-title">Next Steps</div><div className="vrp-content">{generatedEN.nextSteps}</div></div>}
 
           <div className="vrp-section">
@@ -618,6 +643,7 @@ export default function VisitReport() {
           {r.segments?.length>0 && <div className="vrp-section"><div className="vrp-section-title">Segments</div><div className="vrp-segs">{r.segments.map(s=><span key={s} className="vrp-seg">{s}</span>)}</div></div>}
           {[['Objectives',en.objectives],['Discussion',en.discussion],['Technical Details',en.technicalDetails]].map(([t,c])=>c?<div key={t} className="vrp-section"><div className="vrp-section-title">{t}</div><div className="vrp-content">{c}</div></div>:null)}
           {prods.length>0 && <div className="vrp-section"><div className="vrp-section-title">Products Discussed</div><div className="vrp-prods">{prods.map(p=><span key={p.id} className={`vr-prod-tag vr-prod-${p.type}`}>{p.label}</span>)}</div></div>}
+          {en.productDetails && <div className="vrp-section"><div className="vrp-section-title">Product Details</div><div className="vrp-content">{en.productDetails}</div></div>}
           {en.nextSteps && <div className="vrp-section"><div className="vrp-section-title">Next Steps</div><div className="vrp-content">{en.nextSteps}</div></div>}
 
           <div className="vrp-section">
