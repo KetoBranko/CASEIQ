@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react'
-import { HYDROLAR_PRODUCTS, HYDROLAR_APPS } from '../data/hydrolar'
+import { HYDROLAR_PRODUCTS, HYDROLAR_APPS, HYDROLAR_CROSSLINKER } from '../data/hydrolar'
 import './Hydrolar.css'
 
 const BASES = ['Alle', 'Polyester', 'Polyether', 'Polycarbonate']
@@ -54,7 +54,7 @@ export default function Hydrolar() {
           </div>
           <div>
             <div className="hl-title">Hydrolar · Waterborne PU Dispersions</div>
-            <div className="hl-sub">COIM Group · Distributed by Safic-Alcan · {HYDROLAR_PRODUCTS.length} Produkte</div>
+            <div className="hl-sub">COIM Group · Distributed by Safic-Alcan · {HYDROLAR_PRODUCTS.length} Dispersionen + 2 Crosslinker</div>
           </div>
         </div>
         <div className="hl-count">{filtered.length} / {HYDROLAR_PRODUCTS.length}</div>
@@ -230,6 +230,82 @@ export default function Hydrolar() {
           </div>
         </div>
       )}
+      {/* ── Crosslinker Section ── */}
+      <div className="hl-crosslinker-section">
+        <div className="hl-crosslinker-header">
+          <div className="hl-crosslinker-title">
+            <i className="ti ti-link" />
+            NCO-Vernetzer · Hydrolar W75 & W77
+          </div>
+          <div className="hl-crosslinker-sub">
+            Wasserdispergierbare, aliphatische Polyisocyanate zur Vernetzung der WB-PU-Dispersionen
+          </div>
+        </div>
+
+        <div className="hl-crosslinker-compare">
+          {HYDROLAR_CROSSLINKER.map(p => (
+            <div key={p.id} className="hl-cl-card">
+              <div className="hl-cl-card-header">
+                <span className="hl-cl-id">{p.id}</span>
+                <span className="hl-cl-type">{p.type}</span>
+                <span className="hl-cl-voc">{p.voc}</span>
+              </div>
+
+              <div className="hl-cl-desc">{p.desc}</div>
+
+              <div className="hl-cl-params">
+                {[
+                  ['NCO-Gehalt', p.nco + ' %'],
+                  ['Viskosität', p.viscosity + ' ' + p.viscUnit],
+                  ['Dosierung', p.dosage],
+                  ['Topfzeit', p.potLife],
+                  ['Lagerstabilität', p.shelfLife],
+                  ['Lagerung', p.storage],
+                  ...(p.color ? [['Farbe', p.color]] : []),
+                ].map(([k, v]) => (
+                  <div key={k} className="hl-cl-param-row">
+                    <span className="hl-cl-param-key">{k}</span>
+                    <span className="hl-cl-param-val">{v}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="hl-cl-section-label">Vorteile</div>
+              <ul className="hl-cl-benefits">
+                {p.benefits.map((b, i) => <li key={i}>{b}</li>)}
+              </ul>
+
+              <div className="hl-cl-section-label">Kompatibel mit</div>
+              <div className="hl-cl-tags">
+                {p.compatibleWith.map(c => <span key={c} className="hl-cl-tag">{c}</span>)}
+              </div>
+
+              <div className="hl-cl-section-label">Anwendungen</div>
+              <div className="hl-cl-tags">
+                {p.applications.map(a => <span key={a} className={`hl-cl-tag hl-cl-tag-app`}>{a}</span>)}
+              </div>
+
+              <div className="hl-cl-differentiator">
+                <i className="ti ti-bulb" /> {p.differentiator}
+              </div>
+
+              <div className="hl-cl-note">
+                <i className="ti ti-alert-triangle" /> {p.note}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="hl-cl-usage-note">
+          <i className="ti ti-info-circle" />
+          <div>
+            <strong>Einsatz im Kundengespräch:</strong> W75 und W77 werden immer in Kombination mit den Hydrolar WB-PU-Dispersionen eingesetzt.
+            Dosierung 0.5–5.0 Gew.-%. Reaktion startet sofort nach Zugabe – Topfzeit je nach System prüfen.
+            Beide Produkte sind stark feuchtigkeitsempfindlich: Behälter immer fest verschlossen halten.
+          </div>
+        </div>
+      </div>
+
     </div>
   )
 }
