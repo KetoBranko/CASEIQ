@@ -258,6 +258,7 @@ export const QA_TREE = {
     { l: 'Vergilbung im Innenbereiche', nx: 'e3_uv' },
     { l: 'VOC-Reduzierung gefordert', nx: 'e3_voc' },
     { l: 'Anti-Settling / Pigmentabsatz', nx: 'e3_rheologie_sb' },
+    { l: 'Lagerstabilität / vorzeitige Gelierung (Harzherstellung)', nx: 'e3_lagerstabilitaet' },
     { l: 'Kein Problem – Kosten optimieren', nx: 'e3_kosten' },
   ]},
 
@@ -288,6 +289,7 @@ export const QA_TREE = {
     { l: 'Schaumbildung', nx: 'e3_schaum_wb' },
     { l: 'Trocknungszeit', nx: 'e3_trocknung' },
     { l: 'VOC-Reduzierung', nx: 'e3_voc' },
+    { l: 'Lagerstabilität Rohstoff / Monomer (Harzherstellung)', nx: 'e3_lagerstabilitaet' },
   ]},
 
   e2c_epoxy: { ebene: 3, label: 'Pain Points', q: 'Problem bei Epoxy-System?', h: '', os: [
@@ -634,6 +636,7 @@ export const QA_TREE = {
   e3_textil_griff:      { ebene: 4, label: 'Einkauf & Entscheidung', q: 'Von wem kauft der Kunde aktuell?', h: 'Problem: Weichheit / Griff', os: e4_options('textil') },
   e3_moisture:          { ebene: 4, label: 'Einkauf & Entscheidung', q: 'Von wem kauft der Kunde aktuell?', h: 'Problem: Blasenfreiheit / Moisture Scavenger', os: e4_options('moisture') },
   e3_neu:               { ebene: 4, label: 'Einkauf & Entscheidung', q: 'Von wem kauft der Kunde aktuell?', h: 'Ziel: Neuentwicklung', os: e4_options('kosten') },
+  e3_lagerstabilitaet:  { ebene: 4, label: 'Einkauf & Entscheidung', q: 'Von wem kauft der Kunde aktuell?', h: 'Problem: Lagerstabilität / Inhibierung bei Harz- oder Monomerherstellung', os: e4_options('lagerstabilitaet') },
 };
 
 // ═══════════════════════════════════════════
@@ -689,6 +692,7 @@ function result(painKey, lieferant) {
     pigment:            { r:[14,16],             hl:[], sl:['AME02','EGM38'], note:'Nebotint Pigmentpasten (A/U/M/WH), Colourplex/Solaplex OXERRA (CICP/MMO – hitzestabil). · SILANE: AME02/EGM38 als Koppler bei silica-basierter Füllstoffbehandlung (nicht CaCO₃/Carbon Black).' },
     textil:             { r:[23,27,28,29],        hl:['HC208','HC210','HR106','HT306','HR108'], sl:[], note:'Sensio ECOCERT, Softanol EP, Silwet, SAG/Indusil. · HYDROLAR Textil/Leder: HC208/HC210/HR106/HT306/HR108.' },
     moisture:           { r:[47,41],             hl:[], sl:['VTM27'], note:'Safic-Chem TI (Moisture Scavenger – essentiell für 1K-PU und MS-Polymer), SIL Silane. · SILAN: VTM27 (VTMO – einziger Moisture Scavenger im Silan-Portfolio, ideal für MS-Polymer und RTV-Silikon 1K-Systeme).' },
+    lagerstabilitaet:   { r:[48,49,50],          hl:[], sl:[], note:'Eastman Hydroquinone-Inhibitoren – für Harz-/Monomerhersteller (nicht Lackverarbeiter): HQ (General-Purpose-Inhibitor für Acrylate, Methacrylate, Styrol, ungesättigte Polyester), MTBHQ (Co-Inhibitor, hochtemperaturstabil, höhere Löslichkeit), DTBHQ (Lagerinhibitor für ungesättigte Polyester, Anti-Skinning in Lacken, Stoppmittel in Kautschuk-Emulsionen).' },
   };
 
   const base = map[painKey] || { r:[32,33,38], hl:[], note:'Eigenmarken Safic-Alcan als Einstieg: EURONOX, EUROLITE, Neboflow 80X' };
