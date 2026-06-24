@@ -69,6 +69,8 @@ const COL_LABELS = {
 function ResinsSection() {
   const [group, setGroup] = useState('longOil')
   const [query, setQuery] = useState('')
+  const [selected, setSelected] = useState(null)
+  const detailRef = React.useRef(null)
   const active = RESIN_GROUPS.find(g => g.id === group)
 
   const filtered = useMemo(() => {
@@ -80,11 +82,22 @@ function ResinsSection() {
     )
   }, [active, query])
 
+  function selectGroup(id) {
+    setGroup(id)
+    setSelected(null)
+  }
+
+  function selectRow(r, i) {
+    const key = r.id + i
+    setSelected(selected?._key === key ? null : { ...r, _key: key })
+    setTimeout(() => detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
+  }
+
   return (
     <div className="nec-resins">
       <div className="nec-group-tabs">
         {RESIN_GROUPS.map(g => (
-          <button key={g.id} className={`nec-group-tab ${group === g.id ? 'active' : ''}`} onClick={() => setGroup(g.id)}>
+          <button key={g.id} className={`nec-group-tab ${group === g.id ? 'active' : ''}`} onClick={() => selectGroup(g.id)}>
             {g.label}
           </button>
         ))}
@@ -106,7 +119,11 @@ function ResinsSection() {
           </thead>
           <tbody>
             {filtered.map((r, i) => (
-              <tr key={i}>
+              <tr
+                key={i}
+                className={selected?._key === r.id + i ? 'row-selected' : ''}
+                onClick={() => selectRow(r, i)}
+              >
                 {active.cols.map(c => (
                   <td key={c} className={c === 'desc' ? 'nec-desc-cell' : (typeof r[c] === 'number' ? 'nec-num' : '')}>
                     {c === 'id' ? <span className="nec-prod-id">{r[c]}</span> : (r[c] ?? '—')}
@@ -117,6 +134,40 @@ function ResinsSection() {
           </tbody>
         </table>
       </div>
+
+      {selected && (
+        <div ref={detailRef} className="nec-detail">
+          <div className="nec-detail-header">
+            <div className="nec-detail-title">
+              <span className="nec-prod-id" style={{ fontSize: '17px' }}>{selected.id}</span>
+              {selected.type && <span className="nec-detail-type">{selected.type}</span>}
+            </div>
+            <button className="nec-detail-close" onClick={() => setSelected(null)}><i className="ti ti-x" /></button>
+          </div>
+
+          <div className="nec-typapps-bar" style={{ marginBottom: '14px' }}>
+            <i className="ti ti-bulb" /> {NECARBO_CATEGORY_TYPAPPS[group]}
+          </div>
+
+          <div className="nec-detail-grid">
+            <div className="nec-detail-sec">
+              <div className="nec-detail-lbl">Technische Daten</div>
+              <div className="nec-detail-params">
+                {active.cols.filter(c => c !== 'desc' && c !== 'id').map(c => (
+                  <div key={c} className="nec-param-row">
+                    <span className="nec-param-key">{COL_LABELS[c]}</span>
+                    <span className="nec-param-val">{selected[c] ?? '—'}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="nec-detail-sec">
+              <div className="nec-detail-lbl">Eigenschaften & Anwendung</div>
+              <div className="nec-detail-desc">{selected.desc}</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="nec-additives-section">
         <div className="nec-additives-title"><i className="ti ti-flask-2" /> Additive & Spezialitäten</div>

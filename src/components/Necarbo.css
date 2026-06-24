@@ -119,6 +119,47 @@
 .nec-table tbody tr:hover { background: #f7f4fc; }
 .nec-table tbody tr:last-child td { border-bottom: none; }
 
+.nec-table tbody tr { cursor: pointer; transition: background 0.1s; }
+.nec-table tbody tr.row-selected { background: #f0eaf9; }
+
+.nec-detail {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-md);
+}
+.nec-detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.nec-detail-title { display: flex; align-items: center; gap: 10px; }
+.nec-detail-type { font-size: 11px; color: var(--text3); background: var(--bg3); padding: 2px 8px; border-radius: 10px; }
+.nec-detail-close {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text3);
+  padding: 6px;
+  display: flex;
+}
+.nec-detail-close:hover { background: var(--border); color: var(--text); }
+
+.nec-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 720px) { .nec-detail-grid { grid-template-columns: 1fr; } }
+
+.nec-detail-lbl {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text3);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+.nec-detail-params { display: flex; flex-direction: column; gap: 6px; }
+.nec-param-row { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px dashed var(--border); }
+.nec-param-key { color: var(--text3); }
+.nec-param-val { color: var(--text); font-weight: 600; font-family: 'DM Mono', monospace; text-align: right; }
+.nec-detail-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
 .nec-prod-id { font-family: 'DM Mono', monospace; font-weight: 700; color: #5f3dc4; font-size: 12px; white-space: nowrap; }
 .nec-num { font-family: 'DM Mono', monospace; color: var(--text2); white-space: nowrap; }
 .nec-desc-cell { max-width: 320px; font-size: 11.5px; min-width: 220px; }
