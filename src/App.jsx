@@ -32,11 +32,14 @@ export default function App() {
   const [tab, setTab] = useState('db')
   const [principalTab, setPrincipalTab] = useState('hydrolar')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [aboutOpen, setAboutOpen] = useState(false)
   const menuRef = useRef(null)
+  const aboutRef = useRef(null)
 
   useEffect(() => {
     const handler = e => {
       if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false)
+      if (aboutRef.current && !aboutRef.current.contains(e.target)) setAboutOpen(false)
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
@@ -60,6 +63,31 @@ export default function App() {
           </div>
         </div>
         <div className="header-right">
+          <div className="about-wrap" ref={aboutRef}>
+            <button className="about-btn" onClick={() => setAboutOpen(o => !o)} title="Was macht Safic-Alcan?">
+              <i className="ti ti-info-circle" />
+              <span>Was macht Safic-Alcan?</span>
+            </button>
+            {aboutOpen && (
+              <div className="about-popover">
+                <div className="about-popover-title">
+                  <i className="ti ti-building" /> Safic-Alcan – kurz erklärt
+                </div>
+                <p className="about-popover-text">
+                  Safic-Alcan ist ein internationales Distributionshaus für Spezialchemikalien mit eigenem
+                  Lager, eigener Logistik und technischer Beratung. Wir vertreten namhafte Hersteller
+                  (Principals) aus den Bereichen CASE (Coatings, Adhesives, Sealants, Elastomers), Kunststoffe,
+                  Kosmetik, Pharma und weiteren Industriesegmenten und bringen deren Rohstoffe – von
+                  Bindemitteln und Additiven bis zu Pigmenten und Spezialchemikalien – zum Kunden, inklusive
+                  technischem Support, Formulierungsberatung und zuverlässiger Versorgungssicherheit.
+                </p>
+                <p className="about-popover-text">
+                  Wir sind also nicht nur „Verkäufer", sondern Bindeglied zwischen Herstellern und
+                  Verarbeitern, mit eigenem Lagerbestand vor Ort und direktem Zugriff auf Labor-/Anwendungstechnik.
+                </p>
+              </div>
+            )}
+          </div>
           <div className="header-badge">v3.0</div>
         </div>
       </header>

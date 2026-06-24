@@ -59,6 +59,62 @@
   gap: 8px;
 }
 
+.about-wrap { position: relative; }
+
+.about-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 20px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.about-btn:hover { background: rgba(255,255,255,0.22); }
+.about-btn i { font-size: 15px; }
+
+.about-popover {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  width: 360px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 16px;
+  z-index: 100;
+  text-align: left;
+}
+
+.about-popover-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.about-popover-text {
+  font-size: 12.5px;
+  color: var(--text2);
+  line-height: 1.6;
+  margin: 0 0 10px;
+}
+.about-popover-text:last-child { margin-bottom: 0; }
+
+@media (max-width: 700px) {
+  .about-btn span { display: none; }
+  .about-popover { right: -60px; width: 280px; }
+}
+
 .header-badge {
   font-size: 10px;
   padding: 3px 9px;
