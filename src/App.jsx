@@ -77,9 +77,13 @@ export default function App() {
                   Safic-Alcan ist ein internationales Distributionshaus für Spezialchemikalien mit eigenem
                   Lager, eigener Logistik und technischer Beratung. Wir vertreten namhafte Hersteller
                   (Principals) aus den Bereichen CASE (Coatings, Adhesives, Sealants, Elastomers), Kunststoffe,
-                  Kosmetik, Pharma und weiteren Industriesegmenten und bringen deren Rohstoffe – von
-                  Bindemitteln und Additiven bis zu Pigmenten und Spezialchemikalien – zum Kunden, inklusive
-                  technischem Support, Formulierungsberatung und zuverlässiger Versorgungssicherheit.
+                  Kosmetik, Pharma und weiteren Industriesegmenten.
+                </p>
+                <p className="about-popover-text">
+                  Für Coatings konkret heißt das z.B.: Bindemittel (Alkydharze, PU-Dispersionen wie Hydrolar
+                  von COIM), Haftvermittler (Silane der Safic-Chem SIL-Serie), Pigmentpräparationen und
+                  Farbpasten (Nebotint, Nebochips von Necarbo), Additive wie Verlaufsmittel, Entschäumer
+                  und Rheologiemodifizierer, sowie Phenolharze für Dosenlacke und Korrosionsschutz (SI Group).
                 </p>
                 <p className="about-popover-text">
                   Wir sind also nicht nur „Verkäufer", sondern Bindeglied zwischen Herstellern und
