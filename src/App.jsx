@@ -5,6 +5,7 @@ import QAGuide from './components/QAGuide'
 import CustomerAnalysis from './components/CustomerAnalysis'
 import Hydrolar from './components/Hydrolar'
 import Silane from './components/Silane'
+import SIGroup from './components/SIGroup'
 import VisitReport from './components/VisitReport'
 import MarketRadar from './components/MarketRadar'
 import PetroNetwork from './components/PetroNetwork'
@@ -13,6 +14,7 @@ const TABS = [
   { id: 'db',       label: 'Produktdatenbank', icon: 'ti-database' },
   { id: 'hydrolar', label: 'Hydrolar · COIM',  icon: 'ti-droplet-filled' },
   { id: 'silane',   label: 'Silane · SIL',     icon: 'ti-atom' },
+  { id: 'sigroup',  label: 'SI Group',         icon: 'ti-flask' },
   { id: 'qa',       label: 'Gesprächsführer',  icon: 'ti-route' },
   { id: 'ai',       label: 'Kundenrecherche',  icon: 'ti-building-factory-2' },
   { id: 'visit',    label: 'Besuchsbericht',   icon: 'ti-clipboard-text' },
@@ -47,7 +49,7 @@ export default function App() {
         {TABS.map(t => (
           <button
             key={t.id}
-            className={`nav-btn ${tab === t.id ? 'active' : ''} ${t.id === 'hydrolar' ? 'nav-btn-hydrolar' : ''} ${t.id === 'silane' ? 'nav-btn-silane' : ''}`}
+            className={`nav-btn ${tab === t.id ? 'active' : ''} ${t.id === 'hydrolar' ? 'nav-btn-hydrolar' : ''} ${t.id === 'silane' ? 'nav-btn-silane' : ''} ${t.id === 'sigroup' ? 'nav-btn-sigroup' : ''}`}
             onClick={() => setTab(t.id)}
           >
             <i className={`ti ${t.icon}`} />
@@ -60,6 +62,7 @@ export default function App() {
         {tab === 'db'       && <ProductDB />}
         {tab === 'hydrolar' && <Hydrolar />}
         {tab === 'silane'   && <Silane />}
+        {tab === 'sigroup'  && <SIGroup />}
         {tab === 'qa'       && <QAGuide />}
         {tab === 'ai'       && <CustomerAnalysis />}
         {tab === 'visit'    && <VisitReport />}

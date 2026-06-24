@@ -31,6 +31,15 @@ export default function ProductModal({ product: p, onClose }) {
           ))}
         </div>
 
+        {p.typApps && (
+          <div className="modal-section modal-typapps">
+            <div className="modal-label">
+              <i className="ti ti-bulb" /> Typische Anwendungen
+            </div>
+            <div className="modal-value">{p.typApps}</div>
+          </div>
+        )}
+
         <div className="modal-section">
           <div className="modal-label">Chemie / Basis</div>
           <div className="modal-value">{p.chem}</div>

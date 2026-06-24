@@ -90,3 +90,19 @@
 }
 
 .modal-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+
+.modal-typapps .modal-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #2e7d52;
+}
+
+.modal-typapps .modal-value {
+  background: #f0f8f0;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  border-left: 3px solid #2e7d52;
+  color: var(--text);
+  font-weight: 500;
+}
