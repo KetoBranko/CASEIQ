@@ -43,6 +43,9 @@ const COL_LABELS = {
   fiber: 'Faser', desc: 'Beschreibung', type: 'Typ',
 }
 
+const TECH_FIELDS = ['substance', 'ionic', 'fiber', 'type']
+const DESC_FIELDS = ['app', 'desc']
+
 function GroupedSection({ groups, cols, showFiberLegend, showGroupDesc }) {
   const [groupKey, setGroupKey] = useState(groups[0].key)
   const [query, setQuery] = useState('')
@@ -123,19 +126,30 @@ function GroupedSection({ groups, cols, showFiberLegend, showGroupDesc }) {
             <span className="ric-prod-id" style={{ fontSize: '16px' }}>{selected.id}</span>
             <button className="ric-detail-close" onClick={() => setSelected(null)}><i className="ti ti-x" /></button>
           </div>
-          <div className="ric-detail-body">
-            {cols.filter(c => c !== 'id').map(c => (
-              <div key={c} className="ric-detail-row">
-                <span className="ric-detail-key">{COL_LABELS[c]}</span>
-                <span className="ric-detail-val">
-                  {c === 'fiber' && selected[c] ? selected[c].split(',').map(f => f.trim()).map(f => (
-                    <span key={f} className="ric-fiber-badge" title={RICCI_FIBER_LEGEND[f] || f}>{f}</span>
-                  )) :
-                   c === 'ionic' ? <span className={`ric-ionic-badge ric-ionic-${(selected[c] || '').toLowerCase()}`}>{selected[c]}</span> :
-                   (selected[c] ?? '—')}
-                </span>
+          <div className="ric-detail-grid">
+            <div className="ric-detail-sec">
+              <div className="ric-detail-lbl">Technische Daten</div>
+              <div className="ric-detail-params">
+                {cols.filter(c => TECH_FIELDS.includes(c)).map(c => (
+                  <div key={c} className="ric-param-row">
+                    <span className="ric-param-key">{COL_LABELS[c]}</span>
+                    <span className="ric-param-val">
+                      {c === 'fiber' && selected[c] ? selected[c].split(',').map(f => f.trim()).map(f => (
+                        <span key={f} className="ric-fiber-badge" title={RICCI_FIBER_LEGEND[f] || f}>{f}</span>
+                      )) :
+                       c === 'ionic' ? <span className={`ric-ionic-badge ric-ionic-${(selected[c] || '').toLowerCase()}`}>{selected[c]}</span> :
+                       (selected[c] ?? '—')}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+            <div className="ric-detail-sec">
+              <div className="ric-detail-lbl">Beschreibung & Anwendung</div>
+              {cols.filter(c => DESC_FIELDS.includes(c)).map(c => (
+                <div key={c} className="ric-detail-desc">{selected[c]}</div>
+              ))}
+            </div>
           </div>
         </div>
       )}
