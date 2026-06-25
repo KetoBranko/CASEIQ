@@ -249,6 +249,22 @@
 }
 .ar-title i { color: var(--blue); font-size: 18px; }
 
+.conf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.conf-badge i { font-size: 12px; }
+.conf-hoch { background: #e6f4ea; color: #1e7a3f; }
+.conf-mittel { background: #fef3c7; color: #92400e; }
+.conf-niedrig { background: #fde8e8; color: #b42318; }
+
 .ar-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .ar-segs { display: flex; gap: 5px; flex-wrap: wrap; }
 
