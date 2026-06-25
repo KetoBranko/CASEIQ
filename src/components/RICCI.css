@@ -119,8 +119,57 @@
   white-space: nowrap;
 }
 .ric-table tbody td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; color: var(--text2); }
-.ric-table tbody tr:hover { background: #fbf2f5; }
+.ric-table tbody tr:hover { background: #fbf2f5; cursor: pointer; }
 .ric-table tbody tr:last-child td { border-bottom: none; }
+.ric-table tbody tr.row-selected { background: #fdebf0; }
+
+.ric-detail {
+  border: 1px solid #862e4a;
+  border-radius: var(--radius-lg);
+  background: #fffafb;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.ric-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #862e4a;
+}
+.ric-detail-header .ric-prod-id { color: #fff; }
+.ric-detail-close {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+.ric-detail-close:hover { background: rgba(255,255,255,0.3); }
+.ric-detail-body { padding: 14px 16px; }
+.ric-detail-row {
+  display: flex;
+  gap: 14px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12.5px;
+}
+.ric-detail-row:last-child { border-bottom: none; }
+.ric-detail-key {
+  flex: 0 0 140px;
+  color: var(--text3);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding-top: 1px;
+}
+.ric-detail-val { color: var(--text); line-height: 1.5; flex: 1; }
 
 .ric-prod-id { font-family: 'DM Mono', monospace; font-weight: 700; color: #862e4a; font-size: 12px; white-space: nowrap; }
 .ric-desc-cell { max-width: 340px; font-size: 11.5px; min-width: 220px; }

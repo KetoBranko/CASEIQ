@@ -46,6 +46,8 @@ const COL_LABELS = {
 function GroupedSection({ groups, cols, showFiberLegend, showGroupDesc }) {
   const [groupKey, setGroupKey] = useState(groups[0].key)
   const [query, setQuery] = useState('')
+  const [selected, setSelected] = useState(null)
+  const detailRef = React.useRef(null)
   const active = groups.find(g => g.key === groupKey)
 
   const filtered = useMemo(() => {
@@ -60,7 +62,11 @@ function GroupedSection({ groups, cols, showFiberLegend, showGroupDesc }) {
     <div className="ric-section">
       <div className="ric-group-tabs">
         {groups.map(g => (
-          <button key={g.key} className={`ric-group-tab ${groupKey === g.key ? 'active' : ''}`} onClick={() => setGroupKey(g.key)}>
+          <button
+            key={g.key}
+            className={`ric-group-tab ${groupKey === g.key ? 'active' : ''}`}
+            onClick={() => { setGroupKey(g.key); setSelected(null) }}
+          >
             {g.label}
           </button>
         ))}
@@ -86,7 +92,15 @@ function GroupedSection({ groups, cols, showFiberLegend, showGroupDesc }) {
           </thead>
           <tbody>
             {filtered.map((r, i) => (
-              <tr key={i}>
+              <tr
+                key={i}
+                className={selected?._key === r.id + i ? 'row-selected' : ''}
+                onClick={() => {
+                  const key = r.id + i
+                  setSelected(selected?._key === key ? null : { ...r, _key: key })
+                  setTimeout(() => detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100)
+                }}
+              >
                 {cols.map(c => (
                   <td key={c} className={c === 'desc' || c === 'app' ? 'ric-desc-cell' : ''}>
                     {c === 'id' ? <span className="ric-prod-id">{r[c]}</span> :
@@ -102,6 +116,29 @@ function GroupedSection({ groups, cols, showFiberLegend, showGroupDesc }) {
           </tbody>
         </table>
       </div>
+
+      {selected && (
+        <div ref={detailRef} className="ric-detail">
+          <div className="ric-detail-header">
+            <span className="ric-prod-id" style={{ fontSize: '16px' }}>{selected.id}</span>
+            <button className="ric-detail-close" onClick={() => setSelected(null)}><i className="ti ti-x" /></button>
+          </div>
+          <div className="ric-detail-body">
+            {cols.filter(c => c !== 'id').map(c => (
+              <div key={c} className="ric-detail-row">
+                <span className="ric-detail-key">{COL_LABELS[c]}</span>
+                <span className="ric-detail-val">
+                  {c === 'fiber' && selected[c] ? selected[c].split(',').map(f => f.trim()).map(f => (
+                    <span key={f} className="ric-fiber-badge" title={RICCI_FIBER_LEGEND[f] || f}>{f}</span>
+                  )) :
+                   c === 'ionic' ? <span className={`ric-ionic-badge ric-ionic-${(selected[c] || '').toLowerCase()}`}>{selected[c]}</span> :
+                   (selected[c] ?? '—')}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {showFiberLegend && (
         <div className="ric-fiber-legend">
