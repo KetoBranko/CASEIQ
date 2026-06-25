@@ -7,6 +7,7 @@ import Hydrolar from './components/Hydrolar'
 import Silane from './components/Silane'
 import SIGroup from './components/SIGroup'
 import Necarbo from './components/Necarbo'
+import RICCI from './components/RICCI'
 import VisitReport from './components/VisitReport'
 import MarketRadar from './components/MarketRadar'
 import PetroNetwork from './components/PetroNetwork'
@@ -16,6 +17,7 @@ const PRINCIPALS = [
   { id: 'silane',   label: 'Silane · SIL',    icon: 'ti-atom' },
   { id: 'sigroup',  label: 'SI Group',        icon: 'ti-flask' },
   { id: 'necarbo',  label: 'Necarbo',         icon: 'ti-palette' },
+  { id: 'ricci',    label: 'RICCI',            icon: 'ti-flask-2' },
 ]
 
 const TABS = [
@@ -155,6 +157,7 @@ export default function App() {
         {tab === 'principals' && principalTab === 'silane'   && <Silane />}
         {tab === 'principals' && principalTab === 'sigroup'  && <SIGroup />}
         {tab === 'principals' && principalTab === 'necarbo'  && <Necarbo />}
+        {tab === 'principals' && principalTab === 'ricci'    && <RICCI />}
         {tab === 'qa'         && <QAGuide />}
         {tab === 'ai'         && <CustomerAnalysis />}
         {tab === 'visit'      && <VisitReport />}

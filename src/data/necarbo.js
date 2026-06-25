@@ -343,3 +343,20 @@ export const NECARBO_CATEGORY_TYPAPPS = {
   styreneAcrylic: "Holz-/Parkettlacke, Korrosionsschutz-Primer, Dichtstoffe und rissüberbrückende Systeme",
   pu: "Hochwertige Boden- und Möbellacke (wasserbasiert, lösemittelfrei), Holz-/Kunststoff-/Metallbeschichtungen",
 };
+
+export const NECARBO_FOR_AI = [
+  ...NEBOTINT_RANGES.flatMap(r => r.colours.map(c => `${c.name} (Nebotint ${r.key}, ${r.segment})`)),
+  ...NEBOCHIPS_RANGES.flatMap(r => r.colours.map(c => `${c.code} (Nebochips ${r.key}, ${r.category})`)),
+  ...NEBORES_LONG_OIL.map(p => `${p.id} (Nebores langölig, ${p.desc})`),
+  ...NEBORES_MEDIUM_OIL.map(p => `${p.id} (Nebores mittelölig, ${p.desc})`),
+  ...NEBORES_SHORT_OIL.map(p => `${p.id} (Nebores kurzölig, ${p.desc})`),
+  ...NEBORES_MODIFIED.map(p => `${p.id} (Nebores modifiziert, ${p.desc})`),
+  ...NEBORES_THERMOPLASTIC_ACRYLIC.map(p => `${p.id} (Nebores thermoplastisches Acrylharz, ${p.desc})`),
+  ...NEBORES_HYDROXY_ACRYLIC.map(p => `${p.id} (Nebores Hydroxy-Acrylharz, ${p.desc})`),
+  ...NEBOPLAST_PVAC_HOMO.map(p => `${p.id} (Neboplast PVAc-Homopolymer, ${p.desc})`),
+  ...NEBOPLAST_PVAC_CO.map(p => `${p.id} (Neboplast PVAc-Copolymer, ${p.desc})`),
+  ...NEBOPLAST_ACRYLIC.map(p => `${p.id} (Neboplast Acrylat-Dispersion, ${p.desc})`),
+  ...NEBOPLAST_STYRENEACRYLIC.map(p => `${p.id} (Neboplast Styrolacrylat-Dispersion, ${p.desc})`),
+  ...NEBOPLAST_PU.map(p => `${p.id} (Neboplast PU-Dispersion, ${p.desc})`),
+  ...NEBORES_NEBOPLAST_ADDITIVES.map(p => `${p.id} (Necarbo Additiv, ${p.desc})`),
+].join(' | ');

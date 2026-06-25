@@ -1,0 +1,154 @@
+.ric { width: 100%; }
+
+.ric-header {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #862e4a 0%, #1864ab 100%);
+  border-radius: var(--radius-lg);
+  margin-bottom: 14px;
+  color: #fff;
+}
+
+.ric-brand { display: flex; align-items: center; gap: 12px; }
+.ric-logo {
+  width: 42px;
+  height: 42px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
+}
+.ric-title { font-size: 15px; font-weight: 700; color: #fff; }
+.ric-sub { font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+
+.ric-subtabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.ric-subtab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+.ric-subtab:hover { color: var(--text2); }
+.ric-subtab.active { color: #862e4a; border-bottom-color: #862e4a; }
+
+.ric-group-tabs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 12px; }
+.ric-group-tab {
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--text3);
+  font-size: 11.5px;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.ric-group-tab:hover { border-color: #862e4a; color: #862e4a; }
+.ric-group-tab.active { background: #862e4a; color: #fff; border-color: #862e4a; }
+
+.ric-group-desc {
+  font-size: 12.5px;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.ric-typapps-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12.5px;
+  background: #f0f8f0;
+  border-left: 3px solid #2e7d52;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  color: var(--text);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+.ric-typapps-bar i { color: #2e7d52; margin-top: 1px; flex-shrink: 0; }
+
+.ric-search-wrap { position: relative; display: flex; align-items: center; margin-bottom: 12px; }
+.ric-search-icon { position: absolute; left: 10px; color: var(--text3); font-size: 14px; pointer-events: none; }
+.ric-search {
+  width: 100%;
+  max-width: 360px;
+  padding: 7px 12px 7px 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: var(--text);
+  background: var(--bg3);
+}
+.ric-search:focus { outline: none; border-color: #862e4a; background: #fff; }
+
+.ric-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.ric-table { width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; }
+.ric-table thead th {
+  background: var(--bg3);
+  padding: 9px 10px;
+  text-align: left;
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text3);
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.ric-table tbody td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; color: var(--text2); }
+.ric-table tbody tr:hover { background: #fbf2f5; }
+.ric-table tbody tr:last-child td { border-bottom: none; }
+
+.ric-prod-id { font-family: 'DM Mono', monospace; font-weight: 700; color: #862e4a; font-size: 12px; white-space: nowrap; }
+.ric-desc-cell { max-width: 340px; font-size: 11.5px; min-width: 220px; }
+
+.ric-fiber-badge {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  background: #e7f0fa;
+  color: #1864ab;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-right: 3px;
+  cursor: help;
+}
+
+.ric-ionic-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; display: inline-block; }
+.ric-ionic-anionic { background: #fdebec; color: #c92a2a; }
+.ric-ionic-cationic { background: #fff3e0; color: #b8590a; }
+.ric-ionic-amphoteric { background: #f3effa; color: #5f3dc4; }
+
+.ric-fiber-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 10.5px;
+  color: var(--text3);
+  padding-top: 4px;
+}
+.ric-fiber-legend-item strong { color: var(--text2); }
