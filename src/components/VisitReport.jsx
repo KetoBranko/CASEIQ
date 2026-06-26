@@ -25,7 +25,7 @@ const EMPTY_FORM = {
   scContact: 'Branko Premužak',
   participants: '', segments: [],
   objectives: '', discussion: '',
-  productsDiscussed: [], productNotes: {}, technicalDetails: '',
+  productsDiscussed: [], productNotes: {}, customProducts: [], technicalDetails: '',
   nextSteps: '', nextVisitDate: '',
   opportunityLevel: 'medium', estimatedVolume: 'Unbekannt', estimatedTimeline: '',
 }
@@ -45,9 +45,14 @@ function buildPrompt(form) {
     const note = form.productNotes?.[id] || ''
     return p ? `${p.label} (${p.sup})${note ? ': ' + note : ''}` : id
   }).join('\n')
+  const customProdsText = (form.customProducts || []).map(cp =>
+    `${cp.label} (Nicht im Safic-Alcan Portfolio / Fremdprodukt)${cp.note ? ': ' + cp.note : ''}`
+  ).join('\n')
+  const allProdsText = [prodsWithNotes, customProdsText].filter(Boolean).join('\n')
   return `You are writing a professional visit report for Safic-Alcan Deutschland GmbH, a specialty chemicals distributor.
 Translate and format the following information into a professional English visit report.
 Be precise, professional, use chemical/technical terminology correctly.
+Some products discussed may be marked "Nicht im Safic-Alcan Portfolio / Fremdprodukt" (not in the Safic-Alcan portfolio / third-party product) — keep this distinction clear in productDetails, e.g. by noting "(competitor/third-party product, not supplied by Safic-Alcan)".
 Return ONLY a JSON object, no markdown, no backticks.
 
 Format:
@@ -58,7 +63,7 @@ Customer: ${form.customer}
 Date: ${form.date}
 Segments: ${form.segments.join(', ')}
 Products discussed with notes (German):
-${prodsWithNotes || 'none specified'}
+${allProdsText || 'none specified'}
 Objectives (German): ${form.objectives}
 Discussion (German): ${form.discussion}
 Technical details (German): ${form.technicalDetails}
@@ -112,6 +117,7 @@ body{font-family:Arial,sans-serif;font-size:13px;color:#1a1a2e;padding:40px;back
 .prod{padding:3px 10px;border-radius:5px;font-size:11px;font-weight:600;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
 .prod.hl{background:#ecfeff;color:#0e7490;border-color:#a5f3fc}
 .prod.sil{background:#f5f3ff;color:#5b21b6;border-color:#ddd6fe}
+.prod.ext{background:#f1f5f9;color:#64748b;border-color:#cbd5e1;border-style:dashed}
 .opp-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 .opp-badge{padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700}
 .footer{margin-top:36px;padding-top:12px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;font-size:10px;color:#94a3b8}
@@ -141,7 +147,7 @@ ${en.objectives ? `<div class="sec"><div class="sec-title">Objectives</div><div 
 ${en.discussion ? `<div class="sec"><div class="sec-title">Discussion</div><div class="content">${en.discussion}</div></div>` : ''}
 ${en.technicalDetails ? `<div class="sec"><div class="sec-title">Technical Details</div><div class="content">${en.technicalDetails}</div></div>` : ''}
 
-${prods.length ? `<div class="sec"><div class="sec-title">Products Discussed</div><div class="prods">${prods.map(p=>`<span class="prod ${p.type==='hydrolar'?'hl':p.type==='silan'?'sil':''}">${p.label}</span>`).join('')}</div></div>` : ''}
+${prods.length || (report.customProducts||[]).length ? `<div class="sec"><div class="sec-title">Products Discussed</div><div class="prods">${prods.map(p=>`<span class="prod ${p.type==='hydrolar'?'hl':p.type==='silan'?'sil':''}">${p.label}</span>`).join('')}${(report.customProducts||[]).map(cp=>`<span class="prod ext">${cp.label} (third-party)</span>`).join('')}</div></div>` : ''}
 ${en.productDetails ? `<div class="sec"><div class="sec-title">Product Details</div><div class="content">${en.productDetails}</div></div>` : ''}
 
 ${en.nextSteps ? `<div class="sec"><div class="sec-title">Next Steps</div><div class="content">${en.nextSteps}</div></div>` : ''}
@@ -254,7 +260,9 @@ export default function VisitReport() {
   const [apiKey] = useState(() => localStorage.getItem('sa_api_key') || '')
   const [productSearch, setProductSearch] = useState('')
   const [showProductPicker, setShowProductPicker] = useState(false)
+  const [customProductInput, setCustomProductInput] = useState('')
   const [selectedReport, setSelectedReport] = useState(null)
+  const [editingId, setEditingId] = useState(null)
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY)
@@ -269,6 +277,33 @@ export default function VisitReport() {
   const updateForm = (key, val) => setForm(f => ({ ...f, [key]: val }))
   const toggleSegment = (s) => updateForm('segments', form.segments.includes(s) ? form.segments.filter(x=>x!==s) : [...form.segments, s])
   const toggleProduct = (id) => updateForm('productsDiscussed', form.productsDiscussed.includes(id) ? form.productsDiscussed.filter(x=>x!==id) : [...form.productsDiscussed, id])
+
+  const addCustomProduct = () => {
+    const label = customProductInput.trim()
+    if (!label) return
+    updateForm('customProducts', [...(form.customProducts||[]), { id: `custom_${Date.now()}`, label, note: '' }])
+    setCustomProductInput('')
+  }
+  const removeCustomProduct = (id) => updateForm('customProducts', (form.customProducts||[]).filter(cp => cp.id !== id))
+  const updateCustomProductNote = (id, note) => updateForm('customProducts', (form.customProducts||[]).map(cp => cp.id === id ? { ...cp, note } : cp))
+
+  const loadReportForEdit = (r) => {
+    setForm({
+      customer: r.customer || '', address: r.address || '',
+      date: r.date || new Date().toISOString().split('T')[0],
+      scContact: r.scContact || 'Branko Premužak',
+      participants: r.participants || '', segments: r.segments || [],
+      objectives: r.formDE?.objectives || '', discussion: r.formDE?.discussion || '',
+      productsDiscussed: r.productsDiscussed || [], productNotes: r.formDE?.productNotes || {},
+      customProducts: r.customProducts || [], technicalDetails: r.formDE?.technicalDetails || '',
+      nextSteps: r.formDE?.nextSteps || '', nextVisitDate: r.nextVisitDate || '',
+      opportunityLevel: r.opportunityLevel || 'medium', estimatedVolume: r.estimatedVolume || 'Unbekannt',
+      estimatedTimeline: r.estimatedTimeline || '',
+    })
+    setGeneratedEN(r.generatedEN || null)
+    setEditingId(r.id)
+    setView('new')
+  }
 
   const allProducts = getAllProducts()
   const filteredProducts = productSearch
@@ -306,16 +341,20 @@ export default function VisitReport() {
 
   const saveReport = () => {
     const report = {
-      id: Date.now(), date: form.date, customer: form.customer,
+      id: editingId || Date.now(), date: form.date, customer: form.customer,
       scContact: form.scContact, address: form.address, participants: form.participants,
-      segments: form.segments, productsDiscussed: form.productsDiscussed,
+      segments: form.segments, productsDiscussed: form.productsDiscussed, customProducts: form.customProducts || [],
       opportunityLevel: form.opportunityLevel, estimatedVolume: form.estimatedVolume,
       estimatedTimeline: form.estimatedTimeline, nextVisitDate: form.nextVisitDate,
       formDE: { objectives: form.objectives, discussion: form.discussion, technicalDetails: form.technicalDetails, nextSteps: form.nextSteps, productNotes: form.productNotes },
       generatedEN,
     }
-    saveReports([report, ...reports])
-    setForm(EMPTY_FORM); setGeneratedEN(null); setView('list')
+    if (editingId) {
+      saveReports(reports.map(r => r.id === editingId ? report : r))
+    } else {
+      saveReports([report, ...reports])
+    }
+    setForm(EMPTY_FORM); setGeneratedEN(null); setEditingId(null); setView('list')
   }
 
   const deleteReport = (id) => {
@@ -332,7 +371,7 @@ export default function VisitReport() {
           <h2 className="vr-title"><i className="ti ti-clipboard-text" /> Besuchsberichte</h2>
           <p className="vr-sub">Eingabe auf Deutsch · KI übersetzt auf Englisch · PDF-Download</p>
         </div>
-        <button className="vr-btn-new" onClick={() => { setForm(EMPTY_FORM); setGeneratedEN(null); setView('new') }}>
+        <button className="vr-btn-new" onClick={() => { setForm(EMPTY_FORM); setGeneratedEN(null); setEditingId(null); setView('new') }}>
           <i className="ti ti-plus" /> Neuer Bericht
         </button>
       </div>
@@ -359,16 +398,18 @@ export default function VisitReport() {
                   </div>
                   <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
                     <span className="vr-opp-badge" style={{background:opp?.bg,color:opp?.color,border:`1px solid ${opp?.border}`}}>{opp?.label}</span>
+                    <button className="vr-icon-btn" onClick={e=>{e.stopPropagation();loadReportForEdit(r)}} title="Bearbeiten"><i className="ti ti-edit" /></button>
                     <button className="vr-icon-btn" onClick={e=>{e.stopPropagation();exportPDF(r)}} title="PDF herunterladen"><i className="ti ti-file-type-pdf" /></button>
                     <button className="vr-icon-btn vr-icon-btn-del" onClick={e=>{e.stopPropagation();deleteReport(r.id)}} title="Löschen"><i className="ti ti-trash" /></button>
                   </div>
                 </div>
                 {r.segments?.length > 0 && <div className="vr-card-segs">{r.segments.map(s=><span key={s} className="vr-seg">{s}</span>)}</div>}
                 {r.generatedEN?.summary && <div className="vr-card-summary">{r.generatedEN.summary}</div>}
-                {r.productsDiscussed?.length > 0 && (
+                {(r.productsDiscussed?.length > 0 || r.customProducts?.length > 0) && (
                   <div className="vr-card-prods">
                     {r.productsDiscussed.slice(0,4).map(id => { const p=getAllProducts().find(x=>x.id===id); return p?<span key={id} className={`vr-prod-tag vr-prod-${p.type}`}>{p.label}</span>:null })}
-                    {r.productsDiscussed.length > 4 && <span className="vr-prod-more">+{r.productsDiscussed.length-4}</span>}
+                    {(r.customProducts||[]).slice(0, Math.max(0,4-r.productsDiscussed.length)).map(cp => <span key={cp.id} className="vr-prod-tag vr-prod-custom">{cp.label}</span>)}
+                    {(r.productsDiscussed.length + (r.customProducts?.length||0)) > 4 && <span className="vr-prod-more">+{r.productsDiscussed.length + (r.customProducts?.length||0) - 4}</span>}
                   </div>
                 )}
               </div>
@@ -384,10 +425,10 @@ export default function VisitReport() {
     <div className="vr">
       <div className="vr-header">
         <div>
-          <h2 className="vr-title">Neuer Besuchsbericht</h2>
+          <h2 className="vr-title">{editingId ? 'Besuchsbericht bearbeiten' : 'Neuer Besuchsbericht'}</h2>
           <p className="vr-sub">Auf Deutsch ausfüllen – 🎤 Mikrofon-Button für Spracheingabe verfügbar</p>
         </div>
-        <button className="vr-btn-sec" onClick={() => setView('list')}><i className="ti ti-arrow-left" /> Zurück</button>
+        <button className="vr-btn-sec" onClick={() => { setEditingId(null); setView('list') }}><i className="ti ti-arrow-left" /> Zurück</button>
       </div>
 
       <div className="vr-form">
@@ -475,6 +516,44 @@ export default function VisitReport() {
               })}
             </div>
           )}
+
+          {/* Freitext-Produkte: nicht im Safic-Alcan Portfolio */}
+          <div className="vr-custom-prod-block">
+            <label style={{display:'block',marginBottom:'6px',fontSize:'13px',fontWeight:600,color:'#475569'}}>
+              ➕ Weitere Produkte <span style={{color:'#94a3b8',fontWeight:400}}>(nicht im Safic-Alcan Portfolio, z.B. Wettbewerbsprodukte)</span>
+            </label>
+            <div style={{display:'flex',gap:'8px'}}>
+              <input
+                className="vr-prod-search"
+                style={{flex:1}}
+                placeholder="Produktname eingeben (z.B. DYNASYLAN GLYMO, Wettbewerbsprodukt XY...)"
+                value={customProductInput}
+                onChange={e=>setCustomProductInput(e.target.value)}
+                onKeyDown={e=>{ if (e.key==='Enter') { e.preventDefault(); addCustomProduct() } }}
+              />
+              <button type="button" className="vr-btn-sec" onClick={addCustomProduct}><i className="ti ti-plus" /> Hinzufügen</button>
+            </div>
+
+            {(form.customProducts||[]).length > 0 && (
+              <div className="vr-prod-notes-list" style={{marginTop:'10px'}}>
+                {form.customProducts.map(cp => (
+                  <div key={cp.id} className="vr-prod-note-item vr-prod-note-item-custom">
+                    <div className="vr-prod-note-header">
+                      <span className="vr-prod-tag vr-prod-custom">{cp.label}</span>
+                      <span className="vr-prod-note-sup">Nicht im Safic-Alcan Portfolio</span>
+                      <button className="vr-prod-note-remove" onClick={() => removeCustomProduct(cp.id)}>×</button>
+                    </div>
+                    <SpeechTextarea
+                      rows={2}
+                      value={cp.note}
+                      onChange={v => updateCustomProductNote(cp.id, v)}
+                      placeholder={`Was wurde zu ${cp.label} besprochen? Status, Vergleich, Einwände...`}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Nächste Schritte */}
@@ -579,7 +658,7 @@ export default function VisitReport() {
 
           {[['Objectives',generatedEN?.objectives],['Discussion',generatedEN?.discussion],['Technical Details',generatedEN?.technicalDetails]].map(([t,c])=>c?<div key={t} className="vrp-section"><div className="vrp-section-title">{t}</div><div className="vrp-content">{c}</div></div>:null)}
 
-          {prods.length>0 && <div className="vrp-section"><div className="vrp-section-title">Products Discussed</div><div className="vrp-prods">{prods.map(p=><span key={p.id} className={`vr-prod-tag vr-prod-${p.type}`}>{p.label} <span style={{opacity:0.6,fontSize:'10px'}}>({p.sup})</span></span>)}</div></div>}
+          {(prods.length>0 || (form.customProducts||[]).length>0) && <div className="vrp-section"><div className="vrp-section-title">Products Discussed</div><div className="vrp-prods">{prods.map(p=><span key={p.id} className={`vr-prod-tag vr-prod-${p.type}`}>{p.label} <span style={{opacity:0.6,fontSize:'10px'}}>({p.sup})</span></span>)}{(form.customProducts||[]).map(cp=><span key={cp.id} className="vr-prod-tag vr-prod-custom">{cp.label} <span style={{opacity:0.6,fontSize:'10px'}}>(nicht im Portfolio)</span></span>)}</div></div>}
 
           {generatedEN?.productDetails && <div className="vrp-section"><div className="vrp-section-title">Product Details</div><div className="vrp-content">{generatedEN.productDetails}</div></div>}
           {generatedEN?.nextSteps && <div className="vrp-section"><div className="vrp-section-title">Next Steps</div><div className="vrp-content">{generatedEN.nextSteps}</div></div>}
@@ -613,6 +692,7 @@ export default function VisitReport() {
           </div>
           <div style={{display:'flex',gap:'8px'}}>
             <button className="vr-btn-sec" onClick={()=>setView('list')}><i className="ti ti-arrow-left" /> Liste</button>
+            <button className="vr-btn-sec" onClick={()=>loadReportForEdit(r)}><i className="ti ti-edit" /> Bearbeiten</button>
             <button className="vr-btn-new" onClick={()=>exportPDF(r)}><i className="ti ti-download" /> PDF herunterladen</button>
           </div>
         </div>
@@ -642,7 +722,7 @@ export default function VisitReport() {
 
           {r.segments?.length>0 && <div className="vrp-section"><div className="vrp-section-title">Segments</div><div className="vrp-segs">{r.segments.map(s=><span key={s} className="vrp-seg">{s}</span>)}</div></div>}
           {[['Objectives',en.objectives],['Discussion',en.discussion],['Technical Details',en.technicalDetails]].map(([t,c])=>c?<div key={t} className="vrp-section"><div className="vrp-section-title">{t}</div><div className="vrp-content">{c}</div></div>:null)}
-          {prods.length>0 && <div className="vrp-section"><div className="vrp-section-title">Products Discussed</div><div className="vrp-prods">{prods.map(p=><span key={p.id} className={`vr-prod-tag vr-prod-${p.type}`}>{p.label}</span>)}</div></div>}
+          {(prods.length>0 || (r.customProducts||[]).length>0) && <div className="vrp-section"><div className="vrp-section-title">Products Discussed</div><div className="vrp-prods">{prods.map(p=><span key={p.id} className={`vr-prod-tag vr-prod-${p.type}`}>{p.label}</span>)}{(r.customProducts||[]).map(cp=><span key={cp.id} className="vr-prod-tag vr-prod-custom">{cp.label} <span style={{opacity:0.6,fontSize:'10px'}}>(nicht im Portfolio)</span></span>)}</div></div>}
           {en.productDetails && <div className="vrp-section"><div className="vrp-section-title">Product Details</div><div className="vrp-content">{en.productDetails}</div></div>}
           {en.nextSteps && <div className="vrp-section"><div className="vrp-section-title">Next Steps</div><div className="vrp-content">{en.nextSteps}</div></div>}
 

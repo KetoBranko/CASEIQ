@@ -92,7 +92,13 @@
 .vr-prod-tag button:hover { opacity: 1; }
 .vr-prod-hydrolar { background: #ecfeff; color: #0e7490; border-color: #a5f3fc; }
 .vr-prod-silan { background: #f5f3ff; color: #5b21b6; border-color: #ddd6fe; }
+.vr-prod-custom { background: #f1f5f9; color: #64748b; border-color: #cbd5e1; border-style: dashed; }
 .vr-prod-more { font-size: 11px; color: #94a3b8; padding: 2px 6px; }
+
+.vr-custom-prod-block {
+  margin-top: 14px; padding-top: 14px; border-top: 1px dashed #e2e8f0;
+}
+.vr-prod-note-item-custom { border-style: dashed; border-color: #cbd5e1; background: #f8fafc; }
 
 /* Form */
 .vr-form { display: flex; flex-direction: column; gap: 0; }
