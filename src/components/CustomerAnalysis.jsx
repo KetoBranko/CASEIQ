@@ -3,7 +3,7 @@ import { PRODUCTS, SEG_META, PORTFOLIO_FOR_AI } from '../data/products'
 import { HYDROLAR_PRODUCTS } from '../data/hydrolar'
 import { SILAN_PRODUCTS } from '../data/silane'
 import { SIGROUP_FOR_AI, SIGROUP_ALKYLPHENOLS } from '../data/sigroup'
-import { NECARBO_FOR_AI } from '../data/necarbo'
+import { NECARBO_FOR_AI, NEBOPLAST_PU } from '../data/necarbo'
 import { RICCI_FOR_AI } from '../data/ricci'
 import ProductModal from './ProductModal'
 import './CustomerAnalysis.css'
@@ -58,8 +58,23 @@ Weitere Regeln:
 - Hydrolar empfehlen bei: wasserbasierte Lacke, PU-Dispersionen, Holz/Metall/Leder-Beschichtungen, WB-Klebstoffe
 - SI Group empfehlen bei: Dosenlacken/Korrosionsschutz-Primern (Phenolharze), Verarbeitungs-/Langzeitstabilisierung von Kunststoffen oder Lacken gegen Hitze/UV/Vergilbung (Antioxidantien, UV-Stabilisatoren), Epoxidhärter-Diluents/Pigmentnetzmitteln (Alkylphenole)
 - Necarbo empfehlen bei: Alkydharzen für Außenanstriche/Industrielacke (Nebores), wässrigen Acryl-/PU-/PVAc-Dispersionen für Dekor- oder Industriebeschichtungen (Neboplast), Pigment-Tönsystemen/POS-Tönmaschinen (Nebotint), Pigment-Chips/-Konzentraten (Nebochips)
+- WICHTIG — Hydrolar hat Vorrang vor Necarbo bei PU-Dispersionen: Hydrolar (COIM) und die Neboplast-PU-Reihe von Necarbo (PCU/PEU/PHU/PUA-Codes) decken beide wässrige PU-Dispersionen ab und sind damit unsere eigenen Principale im direkten Wettbewerb zueinander. Hydrolar ist IMMER die Erstempfehlung für wasserbasierte PU-Dispersionen — gib Hydrolar-Items einen höheren pct-Wert als vergleichbare Necarbo-Neboplast-PU-Items für den gleichen Anwendungsfall. Necarbo-Neboplast-PU nur als explizite Zweitoption aufnehmen (z.B. "Alternative/Ergänzung zu Hydrolar, falls X benötigt wird") und mit niedrigerem pct als das passende Hydrolar-Pendant.
 - RICCI empfehlen bei: Leder-/Textilveredelung (Fettungsmittel, Nachgerbstoffe, Hydrophobierung), Entschäumern/Netzmitteln/Dispergiermitteln/Weichmachern/Hydrophobierungsmitteln in Lack-, Textil- oder Lederproduktion
 - Alle Texte auf Deutsch, präzise, keine Floskeln`
+
+const NEBOPLAST_PU_IDS = NEBOPLAST_PU.map(p => p.id)
+
+// Hydrolar (eigener Principal für WB-PU-Dispersionen) hat Vorrang vor Necarbo-Neboplast-PU,
+// da beide die gleiche Anwendung (wässrige PU-Dispersionen) abdecken. Necarbo-PU wird als
+// Zweitoption nach hinten sortiert, unabhängig vom pct-Wert, den die KI vergeben hat.
+function sortByPrincipalPriority(items) {
+  return [...items].sort((a, b) => {
+    const aIsSecondaryPU = a.type === 'necarbo' && NEBOPLAST_PU_IDS.includes(a.id)
+    const bIsSecondaryPU = b.type === 'necarbo' && NEBOPLAST_PU_IDS.includes(b.id)
+    if (aIsSecondaryPU !== bIsSecondaryPU) return aIsSecondaryPU ? 1 : -1
+    return (b.pct || 0) - (a.pct || 0)
+  })
+}
 
 export default function CustomerAnalysis() {
   const [query, setQuery] = useState('')
@@ -128,6 +143,7 @@ RICCI Leather/Textile/Coatings-Additive: ${RICCI_FOR_AI}`
       const match = text.match(/\{[\s\S]*"customer"[\s\S]*"items"[\s\S]*\}/)
       if (!match) throw new Error('Kein gültiges JSON in der Antwort')
       const parsed = JSON.parse(match[0])
+      parsed.items = sortByPrincipalPriority(parsed.items || [])
       setResult(parsed)
     } catch (e) {
       setError(e.message)
@@ -370,7 +386,8 @@ function AnalysisResult({ result, onProductClick, onExport }) {
                 } else if (item.type === 'sigroup') {
                   typeIcon = <span style={{fontSize:'10px',background:'#fef3c7',color:'#92400e',padding:'1px 6px',borderRadius:'4px',marginLeft:'6px',fontWeight:600}}>🧬 SI Group</span>
                 } else if (item.type === 'necarbo') {
-                  typeIcon = <span style={{fontSize:'10px',background:'#fce7f3',color:'#9d174d',padding:'1px 6px',borderRadius:'4px',marginLeft:'6px',fontWeight:600}}>🎨 Necarbo</span>
+                  const isSecondaryPU = NEBOPLAST_PU_IDS.includes(item.id)
+                  typeIcon = <span style={{fontSize:'10px',background:'#fce7f3',color:'#9d174d',padding:'1px 6px',borderRadius:'4px',marginLeft:'6px',fontWeight:600}}>🎨 Necarbo{isSecondaryPU ? ' · Zweitoption zu Hydrolar' : ''}</span>
                 } else if (item.type === 'ricci') {
                   typeIcon = <span style={{fontSize:'10px',background:'#fdebf0',color:'#862e4a',padding:'1px 6px',borderRadius:'4px',marginLeft:'6px',fontWeight:600}}>🧪 RICCI</span>
                 } else {
